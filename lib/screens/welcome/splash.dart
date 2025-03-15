@@ -26,8 +26,13 @@ class _SplashState extends State<Splash> {
     }
     return new Scaffold(
         body: Container(
-          color: Colors.black12,
-        )
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/parchment_background.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
     );
   }
 }

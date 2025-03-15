@@ -19,13 +19,13 @@ class _LoginPageState extends State<LoginPage> {
         resizeToAvoidBottomInset: false,
         body: Stack(
             children: <Widget>[
-              /*SvgPicture.asset(
-                "assets/background.svg",
-                fit: BoxFit.fitHeight,
-                alignment: FractionalOffset(0.5, 0.0),
-              ),*/
               Container(
-                color: Colors.black12,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/parchment_background.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
 
               Center(
