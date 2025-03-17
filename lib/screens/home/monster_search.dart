@@ -4,18 +4,23 @@ import 'package:flutter/rendering.dart';
 import '../../components/clearIcon.dart';
 import '../../components/item_views.dart';
 import '../../components/platform_dialog.dart';
+import '../../locator.dart';
 import '../../services/auth.dart';
 //import 'package:share/share.dart';
-import '../../locator.dart';
+import '../../services/active_filters.dart';
 import '../../services/monster_storage.dart';
 //import '../../services/dynamic_link.dart';
 
 final db = FirebaseFirestore.instance;
+
 final MonsterRef = db.collection('Monsters');
 
 class MonsterSearch extends StatefulWidget {
+  const MonsterSearch({Key? key}) : super(key: key);
+
   @override
   _MonsterSearch createState() => _MonsterSearch();
+
 }
 
 class _MonsterSearch extends State<MonsterSearch> {
@@ -30,8 +35,11 @@ class _MonsterSearch extends State<MonsterSearch> {
 
   List bookmarked = [];
 
-  GlobalKey _globalKey = new GlobalKey();
-
+  createQuery() {
+    var monsterQuery = MonsterRef.get();
+    locator<ActiveFilters>().getOn() ? monsterQuery = MonsterRef.where('cr',isEqualTo: locator<ActiveFilters>().cr).get() : monsterQuery = MonsterRef.get();
+    return monsterQuery;
+  }
 
   PopUpItems(uid) {
     return [
@@ -151,6 +159,7 @@ class _MonsterSearch extends State<MonsterSearch> {
 
   @override
   Widget build(BuildContext context) {
+    createQuery();
     Size size = MediaQuery
         .of(context)
         .size;
@@ -162,7 +171,7 @@ class _MonsterSearch extends State<MonsterSearch> {
     });
 
     return FutureBuilder<QuerySnapshot>(
-        future: MonsterRef.get(),
+        future: createQuery(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
@@ -188,23 +197,16 @@ class _MonsterSearch extends State<MonsterSearch> {
                           suffixIcon: clearIcon(_controller, context)),
                       ),*/
                 body: ListView.builder(
-          itemCount: snapshot.data?.size,
-          itemBuilder: (BuildContext context, int index) {
-          return MonsterSetupBasic(snapshot.data?.docs[index].get('cr'),snapshot.data?.docs[index].get('Name'),(){print('yippee');},context);
-          }
-            ));
+                    itemCount: snapshot.data?.size,
+                    itemBuilder: (BuildContext context, int index) {
+                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('Name'),(){print('yippee');},context);
+                    }
+                ));
           }
           else {
             return Center(child: Text("Something went wrong"));
           } //todo use theme colour
         });
-
-
-    void _scrollListener() {
-      if (_scrollController.position.extentAfter < 500) {
-        setState(() {});
-      }
-    }
   }
 
 }

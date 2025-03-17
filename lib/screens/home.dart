@@ -7,6 +7,7 @@ import '../components/bookmark_drawer_setup.dart';
 import '../components/center_button_nav.dart';
 import '../components/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
+import '../services/active_filters.dart';
 import '/services/auth.dart';
 
 import '../components/rounded_button.dart';
@@ -14,18 +15,21 @@ import '../components/rounded_button.dart';
 class Home extends StatefulWidget {
   Home({int? currentIndex});
 
-  final List<Widget> _page = [
-    MonsterSearch(),
-    Center(child:RoundedButton(text: "SignOut1", press: () {})),
-    Center(child:RoundedButton(text: "SignOut3", press: () {})),
-    LoginPage(),
-    SignUpPage()
-  ];
+
 
   _Home createState() => _Home();
 }
 
 class _Home extends State<Home>{
+  late List<Widget> _page = [
+    MonsterSearch(key: monsterSearchKey),
+    Center(child: RoundedButton(text: "SignOut1", press: () {})),
+    Center(child: RoundedButton(text: "SignOut3", press: () {})),
+    LoginPage(),
+    SignUpPage()
+  ];
+  GlobalKey<State<MonsterSearch>> monsterSearchKey = new GlobalKey<State<MonsterSearch>>();
+
   int currentIndex = 0;
   void onTapped(int index) {
     setState(() {
@@ -36,7 +40,6 @@ class _Home extends State<Home>{
 
   GlobalKey<ScaffoldState> mainScaffold = GlobalKey();
 
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -45,14 +48,17 @@ class _Home extends State<Home>{
       appBar: AppBar(
         actions: [
           IconButton(icon: Icon(Icons.search), onPressed: () {  },), //todo disable on other pages
-          IconButton(icon: Icon(Icons.filter_alt), onPressed: () { FilterList(context); },), //todo disable on other pages + fill/unfill for filters (maybe 'custom' widget)
+          IconButton(icon: Icon(Icons.filter_alt), onPressed: ()  async {
+            await filterList(context);
+            monsterSearchKey.currentState?.setState(() {}); //todo check this is good practise, updates page when filters list closes
+            },), //todo disable on other pages + fill/unfill for filters (maybe 'custom' widget)
           Padding(
-          padding: const EdgeInsets.only(right: 10.0),
-          child: InkWell(
-            child: Avatar(15.0,15.0),
-            onTap: () {mainScaffold.currentState?.openEndDrawer();},
-          ),
-        )],
+            padding: const EdgeInsets.only(right: 10.0),
+            child: InkWell(
+              child: Avatar(15.0,15.0),
+              onTap: () {mainScaffold.currentState?.openEndDrawer();},
+            ),
+          )],
         //padding: const EdgeInsets.symmetric(horizontal: 10.0),
         /*leading: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -80,7 +86,7 @@ class _Home extends State<Home>{
             Stack(children: [
               IndexedStack(
                 index: currentIndex,
-                children: widget._page,
+                children: _page,
               ),
               // todo move to right, add a different drawer for bookmarked monsters left?
             ]),

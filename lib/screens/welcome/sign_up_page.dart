@@ -40,7 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       child: Text(
                         "Sign Up",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: TextStyle( //todo match theme
                           fontSize: 40,
                           color: const Color(0xFF404040),
                           fontWeight: FontWeight.w400,

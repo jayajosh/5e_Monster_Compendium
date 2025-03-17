@@ -115,5 +115,5 @@ void reportBug() async {
   );
   // final _uri = Uri.parse("mailto:j.aston-adams@hotmail.co.uk?subject=Bug%20Report&body=Platform:%20${Platform.operatingSystem}");
     await canLaunchUrl(_uri) ? await launchUrl(_uri)
-      : print( 'Could not launch $_uri');
+      : print( 'Could not launch $_uri'); //todo replace with logcat
 }

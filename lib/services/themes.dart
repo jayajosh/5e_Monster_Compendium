@@ -9,7 +9,19 @@ class ThemeNotifier with ChangeNotifier {
   ThemeMode getThemeMode() {return _themeMode;}
 
   final darkTheme = ThemeData(
-      primarySwatch: Colors.lightBlue,
+    colorScheme: ColorScheme.dark(
+      primary: Color(0xFFA30D0D), // Deep Red
+      onPrimary: Colors.white,
+      secondary: Color(0xFFC9A643), // Gold
+      onSecondary: Colors.black,
+      background: Color(0xFF1E1E1E), // Dark
+      onBackground: Colors.white,
+      surface: Color(0xFF3A3A3A), // Darker Gray
+      onSurface: Colors.white,
+      error: Color(0xFF7C0A02), // Blood Red
+      onError: Colors.white,
+    ),
+      /*primarySwatch: Colors.lightBlue,
       primaryColor: Colors.lightBlueAccent,
       //accentColor: Colors.blue,
 
@@ -34,13 +46,26 @@ class ThemeNotifier with ChangeNotifier {
       disabledColor: Colors.grey,
       //cardColor: isDarkTheme ? Color(0xaa404040) : Color(0xaaF1F5FB),
       brightness:Brightness.dark
-    /*buttonTheme: Theme.of(context).buttonTheme.copyWith(
+    *//*buttonTheme: Theme.of(context).buttonTheme.copyWith(
           colorScheme: isDarkTheme ? ColorScheme.dark() : ColorScheme.light()),*/
   );
 
   final lightTheme = ThemeData(
-    primarySwatch: Colors.blue,
-    primaryColor: Colors.blue,
+    //brightness: Brightness.light,
+    colorScheme: ColorScheme.light(
+      primary: Color(0xFFA30D0D), // Deep Red
+      onPrimary: Colors.white,
+      secondary: Color(0xFFC9A643), // Gold
+      onSecondary: Colors.black,
+      background: Color(0xFFF5E8C7), // Parchment
+      onBackground: Color(0xFF1E1E1E), // Dark text
+      surface: Color(0xFFE0D8CC), // Light gray for cards
+      onSurface: Color(0xFF1E1E1E), // Dark text
+      error: Color(0xFF7C0A02), // Blood Red
+      onError: Colors.white,
+    ),
+    //primaryColor: Colors.black,
+    /*primaryColor: Colors.blue,
     //accentColor: Colors.lightBlueAccent,
 
     scaffoldBackgroundColor: Color(0xffF4F4F4),
@@ -64,7 +89,7 @@ class ThemeNotifier with ChangeNotifier {
     disabledColor: Colors.grey,
     //cardColor: isDarkTheme ? Color(0xaa404040) : Color(0xaaF1F5FB),
     brightness: Brightness.light,
-    /*buttonTheme: Theme.of(context).buttonTheme.copyWith(
+    *//*buttonTheme: Theme.of(context).buttonTheme.copyWith(
           colorScheme: isDarkTheme ? ColorScheme.dark() : ColorScheme.light()),*/
   );
 

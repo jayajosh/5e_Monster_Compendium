@@ -1,13 +1,13 @@
 class Monster{
 
   String? name;
-  int? cr;
+  double? cr;
 
   setName (String? n) {
     name = n;
   }
 
-  setTable (int? c) {
+  setTable (double? c) {
     cr = c;
   }
 
@@ -15,7 +15,7 @@ class Monster{
     return name;
   }
 
-  int? getCr () {
+  double? getCr () {
     return cr;
   }
 
