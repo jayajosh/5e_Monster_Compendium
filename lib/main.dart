@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'Screens/Welcome/sign_up_page.dart';
 import 'locator.dart';
 import 'screens/Welcome/splash.dart';
+import 'screens/Home/monster_view.dart';
 import 'screens/home.dart';
 import 'services/navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,6 +78,7 @@ class _Main extends State<Main> with WidgetsBindingObserver{
             '/WelcomePage': (context) => WelcomePage(),
             '/LoginPage': (context) => LoginPage(),
             '/SignUpPage': (context) => SignUpPage(),
+            '/Home/MonsterView': (context) => MonsterView()
 
           },
         )

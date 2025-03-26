@@ -9,6 +9,7 @@ import '../../services/auth.dart';
 //import 'package:share/share.dart';
 import '../../services/active_filters.dart';
 import '../../services/monster_storage.dart';
+import 'monster_view.dart';
 //import '../../services/dynamic_link.dart';
 
 final db = FirebaseFirestore.instance;
@@ -37,7 +38,12 @@ class _MonsterSearch extends State<MonsterSearch> {
 
   createQuery() {
     var monsterQuery = MonsterRef.get();
-    locator<ActiveFilters>().getOn() ? monsterQuery = MonsterRef.where('cr',isEqualTo: locator<ActiveFilters>().cr).get() : monsterQuery = MonsterRef.get();
+    locator<ActiveFilters>().getOn() ?
+    monsterQuery = MonsterRef
+        .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
+        .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
+        .get()
+        : monsterQuery = MonsterRef.get();
     return monsterQuery;
   }
 
@@ -199,7 +205,7 @@ class _MonsterSearch extends State<MonsterSearch> {
                 body: ListView.builder(
                     itemCount: snapshot.data?.size,
                     itemBuilder: (BuildContext context, int index) {
-                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('Name'),(){print('yippee');},context);
+                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){Navigator.pushNamed(context, '/Home/MonsterView');},context);
                     }
                 ));
           }

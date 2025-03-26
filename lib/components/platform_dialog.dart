@@ -195,7 +195,7 @@ overwriteRoute(routename) async {
   await dbRef.child("route").set([]);
 }
 */
-resetPassword(context){
+resetPassword(context){ //todo fix dialog
   TextEditingController _textFieldController = TextEditingController();
   final _title = "Reset Password";
 
@@ -262,7 +262,7 @@ resetPassword(context){
 
 errorPassword(context){
   FocusScope.of(context).unfocus();
-  final snack = SnackBar(content: Text('Please the email to the account you want to reset'), behavior: SnackBarBehavior.floating );
+  final snack = SnackBar(content: Text('Please enter the email to the account you want to reset'), behavior: SnackBarBehavior.floating );
   ScaffoldMessenger.of(context).showSnackBar(snack);
 }
 

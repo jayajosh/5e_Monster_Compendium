@@ -4,12 +4,8 @@ import 'package:monster_compendium/services/active_filters.dart';
 
 import '../locator.dart';
 
-Future filterList(BuildContext context) {
-
-  //final crList =
+Future filterList(BuildContext context){
   final crController = TextEditingController();
-  print(Theme.of(context));
-  print(Theme.of(context).colorScheme.primary);
   return showModalBottomSheet(
     context: context,
     builder: (context) {
@@ -23,12 +19,19 @@ Future filterList(BuildContext context) {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      DropdownMenu(dropdownMenuEntries: crList(),menuHeight: 250,onSelected: (cr){locator<ActiveFilters>().cr = cr;},),
-                      DropdownMenu(dropdownMenuEntries: crList(),menuHeight: 250,onSelected: (cr){locator<ActiveFilters>().cr = cr;},), //todo show selected on reopen.
+                      DropdownMenu(initialSelection: locator<ActiveFilters>().crmin,label: const Text('Min'),dropdownMenuEntries: crList(),menuHeight: 250,onSelected: (cr){locator<ActiveFilters>().crmin = cr;},),
+                      DropdownMenu(initialSelection: locator<ActiveFilters>().crmax, label: const Text('Max'),dropdownMenuEntries: crList(),menuHeight: 250,onSelected: (cr){locator<ActiveFilters>().crmax = cr;},), //todo show selected on reopen.
                     ],
                   ), //todo show selected on reopen.
                   //ElevatedButton(onPressed: () {activeFilters.cr = 1;}, child: const Text('Enable cr'),),
-                  ElevatedButton(onPressed: () {Navigator.pop(context); saveFilters(crController);}, child: const Text('Close BottomSheet'),)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 15,
+                    children: [
+                      ElevatedButton(onPressed: () {Navigator.pop(context); resetFilters(crController);}, child: const Text('Reset Filters'),),
+                      ElevatedButton(onPressed: () {Navigator.pop(context); saveFilters(crController);}, child: const Text('Save Filters'),),
+                      ],
+                  )
                 ]
             ),
           )
@@ -37,10 +40,23 @@ Future filterList(BuildContext context) {
   );
 }
 
+loadFilters(){
+  return locator<ActiveFilters>().crmax;
+}
+
 saveFilters(TextEditingController cr){
   //cr.text.isEmpty ? activeFilters.cr = null : activeFilters.cr = double.parse(cr.text);
   //activeFilters.cr = double.parse(cr.text);
   locator<ActiveFilters>().on = true;
+  locator<ActiveFilters>().updateFilters();
+}
+
+resetFilters(TextEditingController cr){
+  //cr.text.isEmpty ? activeFilters.cr = null : activeFilters.cr = double.parse(cr.text);
+  //activeFilters.cr = double.parse(cr.text);
+  locator<ActiveFilters>().on = false;
+  locator<ActiveFilters>().crmin = null;
+  locator<ActiveFilters>().crmax = null;
   locator<ActiveFilters>().updateFilters();
 }
 
@@ -93,3 +109,9 @@ inputFormatters: <TextInputFormatter>[
 FilteringTextInputFormatter.digitsOnly
 ],
 ),*/
+
+/* todo WIP filter list to not allow contradicting minimum and maximum values. \/\/\/
+
+DropdownMenu(initialSelection: locator<ActiveFilters>().crmin,label: const Text('Min'),dropdownMenuEntries: crList()
+    .where((entry) => (entry.value ?? double.infinity) <= (loadFilters() ?? double.infinity)).toList()
+,menuHeight: 250,onSelected: (cr){locator<ActiveFilters>().crmin = cr;setState(){};},),*/

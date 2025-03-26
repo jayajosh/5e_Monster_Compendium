@@ -14,40 +14,12 @@ class ThemeNotifier with ChangeNotifier {
       onPrimary: Colors.white,
       secondary: Color(0xFFC9A643), // Gold
       onSecondary: Colors.black,
-      background: Color(0xFF1E1E1E), // Dark
-      onBackground: Colors.white,
-      surface: Color(0xFF3A3A3A), // Darker Gray
-      onSurface: Colors.white,
+      surface: Color(0xFF1E1F22),
+      //onSurface: Color(0xFFFFFF),// Dark
+      surfaceContainerLow: Color(0xFF2E3640), // Dark
       error: Color(0xFF7C0A02), // Blood Red
       onError: Colors.white,
     ),
-      /*primarySwatch: Colors.lightBlue,
-      primaryColor: Colors.lightBlueAccent,
-      //accentColor: Colors.blue,
-
-      scaffoldBackgroundColor: Color(0xff121212),
-      //backgroundColor: Color(0xff363636),
-
-      textTheme: TextTheme(bodyLarge: TextStyle(
-          color: Color(0xffc7d0d7)),
-      bodyMedium: TextStyle(color: Color(0xffcdcdcd))),
-
-      indicatorColor: Colors.lightBlueAccent,
-      //buttonColor: Colors.lightBlueAccent,
-
-      hintColor:Color(0xCCc7d0d7),
-      dividerColor: Colors.black12,
-
-      highlightColor:Color(0xaac7d0d7),
-      hoverColor:Color(0xaac7d0d7),
-
-      focusColor: Colors.lightBlueAccent,
-
-      disabledColor: Colors.grey,
-      //cardColor: isDarkTheme ? Color(0xaa404040) : Color(0xaaF1F5FB),
-      brightness:Brightness.dark
-    *//*buttonTheme: Theme.of(context).buttonTheme.copyWith(
-          colorScheme: isDarkTheme ? ColorScheme.dark() : ColorScheme.light()),*/
   );
 
   final lightTheme = ThemeData(
@@ -57,9 +29,8 @@ class ThemeNotifier with ChangeNotifier {
       onPrimary: Colors.white,
       secondary: Color(0xFFC9A643), // Gold
       onSecondary: Colors.black,
-      background: Color(0xFFF5E8C7), // Parchment
-      onBackground: Color(0xFF1E1E1E), // Dark text
-      surface: Color(0xFFE0D8CC), // Light gray for cards
+      surface: Color(0xFFF5E8C7), // Parchment
+      surfaceContainerLow: Color(0xFFE0D8CC), // Light gray for cards
       onSurface: Color(0xFF1E1E1E), // Dark text
       error: Color(0xFF7C0A02), // Blood Red
       onError: Colors.white,
@@ -130,3 +101,16 @@ class ThemeNotifier with ChangeNotifier {
     notifyListeners();
   }
 }
+
+TextStyle TitleFont() {
+  return TextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      letterSpacing: 1.2,
+      shadows: [
+  Shadow(
+  color: Colors.black.withOpacity(0.2),
+  blurRadius: 3,
+  offset: Offset(1, 1),
+  )]);
+  }
