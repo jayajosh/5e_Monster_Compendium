@@ -26,7 +26,7 @@ class MonsterSearch extends StatefulWidget {
 
 class _MonsterSearch extends State<MonsterSearch> {
   TextEditingController _controller = new TextEditingController(text: "");
-  ScrollController _scrollController = new ScrollController();
+  //ScrollController _scrollController = new ScrollController(); //todo check and delete
 
   int loadedIndex = 0;
 
@@ -98,18 +98,15 @@ class _MonsterSearch extends State<MonsterSearch> {
     }
   }
 
-  view(uid, routename) async {
-    Navigator.pushNamed(
-        context, '/Home/RouteMap',
-        arguments: [uid, routename]);
+  view(uid) async {
+    if (!context.mounted) return; // Ensures context is valid
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushNamed(
+          context, '/Home/MonsterView',
+          arguments: [uid]);
+    });
   }
 
-  /* qr(uid,routename) async {
-    var size = MediaQuery.of(context).size;
-    String link = await getLink(uid, routename);
-    qrDialog(context, routename, SizedBox(width: size.width/1.5, height: size.width/1.5, child: QrImage(backgroundColor: Colors.white, data: link, version: QrVersions.auto, semanticsLabel: routename)));
-  }
-*/
   /* share(uid,routename) async {
     String link = await getLink(uid,routename);
     Share.share(link);
@@ -205,12 +202,18 @@ class _MonsterSearch extends State<MonsterSearch> {
                 body: ListView.builder(
                     itemCount: snapshot.data?.size,
                     itemBuilder: (BuildContext context, int index) {
-                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){Navigator.pushNamed(context, '/Home/MonsterView');},context);
+                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){view(snapshot.data?.docs[index].id);},context);
                     }
                 ));
           }
           else {
-            return Center(child: Text("Something went wrong"));
+            return Center(child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                Text("\n\nLoading",style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
+              ],
+            ));
           } //todo use theme colour
         });
   }

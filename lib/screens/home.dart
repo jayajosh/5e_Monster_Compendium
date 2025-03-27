@@ -75,14 +75,14 @@ class _Home extends State<Home>{
       ),
       body:
       Stack(
-          children: [Container(
+          children: [/*Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/parchment_background.png"),
                 fit: BoxFit.cover,
               ),
             ),
-          ),
+          ),*/
             Stack(children: [
               IndexedStack(
                 index: currentIndex,

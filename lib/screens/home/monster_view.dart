@@ -1,164 +1,270 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
+import '../../components/loading_shimmer.dart';
 import '../../components/stat_icons.dart';
 
 ValueNotifier<int> indexNotifier = ValueNotifier<int>(0);
-
 class MonsterView extends StatefulWidget {
   @override
   _MonsterView createState() => _MonsterView();
 }
 
-class _MonsterView extends State<MonsterView>{
+class _MonsterView extends State<MonsterView> {
+
+  getArgs<DocumentReference>() {
+    List? args = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as List?;
+
+    if(List == null){print('yikers');}
+    return args;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: photoBorder( const Image(
-                      image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+    return FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance.collection('Monsters').doc(
+            getArgs()?[0])
+            .get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+                child: Text("Something went wrong")); //todo Use theme colour
+          }
+
+          if (snapshot.hasData && !snapshot.data!.exists) {
+            return Scaffold(
+                appBar: AppBar(
+                  leading: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(
+                      Icons.arrow_back_ios,
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                      padding: EdgeInsets.all(16),
-                      margin: EdgeInsets.symmetric( horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(12), // Rounded corners
-                      ),
-                      child: Column(
-                        children: [
-                          Row( //todo center better
-                            children: [
-                              Center(child: Text('Challenge',style: TextStyle(fontWeight: FontWeight.bold))),
-                              Center(child: Text('12')),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Stack(
-                                    alignment: AlignmentDirectional.center,
-                                    children: [
-                                      Icon(Icons.shield_outlined,color: Theme.of(context).colorScheme.secondary,size:64),
-                                      Column(
-                                        children: [
-                                          Text('12',style: TextStyle(fontWeight: FontWeight.bold)),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: Stack(
-                                    alignment: AlignmentDirectional.center,
-                                    children: [
-                                      Icon(Icons.favorite_outline,color: Theme.of(context).colorScheme.secondary,size:64),
-                                      Text('12',style: TextStyle(fontWeight: FontWeight.bold))
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text('Speed 30ft.,\nswim 30ft.,\nfly n/a.'), //todo bold Speed
-                        ],
-                      )
-                  ),
-                )
-              ],
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              margin: EdgeInsets.symmetric( horizontal: 8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerLow,
-                borderRadius: BorderRadius.circular(12), // Rounded corners
-              ),
-              child: Row(
-                children: [
-                  statBlock(context,'STR',12,'+10'),
-                  statBlock(context,'DEX',12,'+1'),
-                  statBlock(context,'CON',12,'+1'),
-                  statBlock(context,'INT',12,'+1'),
-                  statBlock(context,'WIS',12,'+1'),
-                  statBlock(context,'CHA',12,'+1'),
-                ],
-              ),
-             // todo add a 'bottom nav bar' for like, bookmark and comment?? or add to app bar
-            ),
-            Expanded(child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.fromLTRB(8,10,8,32), // todo fix all margins
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12), // Rounded corners
-                ),
-                child: Column(
+                body: Center(child: Text("Data does not exist"))
+            );
+          }
+
+          //if (snapshot.connectionState == ConnectionState.done) {print(snapshot.data?.get('name')+'oogabooga');return loading(context);}
+
+          if (snapshot.connectionState == ConnectionState.done) {
+            var statblock = snapshot.data!;
+            return Scaffold(
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ValueListenableBuilder<int>(
-                      valueListenable: indexNotifier,
-                      builder: (context, index, child) {
-                        return Row(
-                          children: [
-                            infoButton(context,Icons.list_alt,'Details',0),
-                            infoButton(context,Icons.star,'Actions',1),
-                            infoButton(context,Icons.menu_book_outlined,'Description',2),
-                          ],
-                        );
-                      },),
-                    Divider(),
-                    Expanded( // Add this to allow scrolling inside
-                      child: SingleChildScrollView(
-                        child: ValueListenableBuilder<int>(
-                          valueListenable: indexNotifier,
-                          builder: (context, index, child) {
-                            return choser(index); // Call function instead of using a class
-                          },
-                        ),
+                    SizedBox(
+                      height: 200,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: photoBorder(const Image(
+                              image: NetworkImage(
+                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                            ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                                padding: EdgeInsets.all(8),
+                                margin: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .surfaceContainerLow,
+                                  borderRadius: BorderRadius.circular(
+                                      12), // Rounded corners
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row( //todo center better
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Center(child: Text('Challenge ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold))),
+                                        Center(child: Text(statblock.get('cr').toString())),
+                                      ],
+                                    ),
+                                    Center(child: Text('('+statblock.get('xp').toString()+'; PB +'+snapshot.data!.get('proficiency_bonus').toString()+')')),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Center(
+                                            child: Stack(
+                                              alignment: AlignmentDirectional
+                                                  .center,
+                                              children: [
+                                                Icon(Icons.shield_outlined,
+                                                    color: Theme
+                                                        .of(context)
+                                                        .colorScheme
+                                                        .secondary, size: 64),
+                                                Column(
+                                                  children: [
+                                                    Text(statblock.get('ac')['value'].toString(), style: TextStyle(
+                                                        fontWeight: FontWeight
+                                                            .bold)),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Center(
+                                            child: Stack(
+                                              alignment: AlignmentDirectional
+                                                  .center,
+                                              children: [
+                                                //todo orrrr add brackets underneath
+                                                Icon(Icons.favorite_outline, //todo inkwell w/ ontop => swap to hit_dice or hit_points_roll
+                                                    color: Theme
+                                                        .of(context)
+                                                        .colorScheme
+                                                        .secondary, size: 64),
+                                                Text(statblock.get('hit_points').toString(), style: TextStyle(
+                                                    fontWeight: FontWeight.bold))
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    RichText(text:
+                                      TextSpan(text: '',
+                                          children: [
+                                            TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
+                                            TextSpan(text: statblock.get('speed')['walk']),
+                                            //todo function this??? \/\/\/
+                                            if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
+                                            if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
+                                            if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
+                                            if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
+                                            ]
+                                      )
+                                    ),
+                                    //todo bold Speed
+                                  ],
+                                )
+                            ),
+                          )
+                        ],
                       ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      margin: EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(
+                            12), // Rounded corners
+                      ),
+                      child: Row(
+                        children: [
+                          scoreBlock(context, 'strength', statblock),
+                          scoreBlock(context, 'dexterity', statblock),
+                          scoreBlock(context, 'constitution', statblock),
+                          scoreBlock(context, 'intelligence', statblock),
+                          scoreBlock(context, 'wisdom', statblock),
+                          scoreBlock(context, 'charisma', statblock),
+                        ],
+                      ),
+                      // todo add a 'bottom nav bar' for like, bookmark and comment?? or add to app bar
+                    ),
+                    Expanded(child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        margin: EdgeInsets.fromLTRB(8, 10, 8, 32),
+                        // todo fix all margins
+                        decoration: BoxDecoration(
+                          color: Theme
+                              .of(context)
+                              .colorScheme
+                              .surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(
+                              12), // Rounded corners
+                        ),
+                        child: Column(
+                          children: [
+                            ValueListenableBuilder<int>(
+                              valueListenable: indexNotifier,
+                              builder: (context, index, child) {
+                                return Row(
+                                  children: [
+                                    infoButton(
+                                        context, Icons.list_alt, 'Details', 0),
+                                    infoButton(
+                                        context, Icons.star, 'Actions', 1),
+                                    infoButton(
+                                        context, Icons.menu_book_outlined,
+                                        'Description', 2),
+                                  ],
+                                );
+                              },),
+                            Divider(),
+                            Expanded( // Add this to allow scrolling inside
+                              child: SingleChildScrollView(
+                                child: ValueListenableBuilder<int>(
+                                  valueListenable: indexNotifier,
+                                  builder: (context, index, child) {
+                                    return choser(index,statblock); // Call function instead of using a class
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                    ),
                     )
                   ],
+                ),
+                appBar: AppBar(
+                  elevation: 0.0,
+                  titleSpacing: 10.0,
+                  title: Text(statblock.get('name')),
+                  bottom: PreferredSize(preferredSize: Size.zero,
+                      child: Text(statblock.get('size')+' '+statblock.get('type')+', '+statblock.get('alignment'))),
+                  centerTitle: true,
+                  leading: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                    ),
+                  ),
                 )
-            ),
-            )
-          ],
-        ),
-        appBar: AppBar(
-          elevation: 0.0,
-          titleSpacing: 10.0,
-          title: Text('Monster Name'),
-          bottom: PreferredSize(preferredSize: Size.zero,
-              child: Text('Size Type, Alignment')),
-          centerTitle: true,
-          leading: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-            ),
-          ),
-        )
+            );
+          };
+          return loading(context);
+        }
     );
   }
 }
 
-statBlock(context,stat,value,modifier) { // todo modifier code based //todo stat full length, trunc to 3 and capitalise
+modifier(int value){ //todo check
+  String modifier;
+  value <= 10 ? modifier = ((value-10)/2).truncate().toString():modifier = '+'+((value-10)/2).truncate().toString();
+  return modifier;
+}
+
+scoreBlock(context,String stat,data) {
+  String statText = stat.substring(0,3).toUpperCase();
   return Flexible(
     child: Column(
         mainAxisSize: MainAxisSize.min,
         children:[
-          Flexible(child: Center(child: Text(stat,style: TextStyle(fontWeight: FontWeight.bold)))),
+          Flexible(child: Center(child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)))),
           Flexible(child:
           Stack(
               alignment: Alignment.bottomCenter,
@@ -167,11 +273,11 @@ statBlock(context,stat,value,modifier) { // todo modifier code based //todo stat
                 Column(children: [
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,8),
-                    child: Text(value.toString(),style: TextStyle(fontWeight: FontWeight.w900)),
+                    child: Text(data.get('ability_scores')[stat].toString(),style: TextStyle(fontWeight: FontWeight.w900)),
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
-                    child: Text(modifier,style: TextStyle(color: Theme.of(context).colorScheme.onSecondary,fontWeight: FontWeight.w900),), //todo update text colour or fix frame
+                    child: Text(modifier(data.get('ability_scores')[stat]),style: TextStyle(color: Theme.of(context).colorScheme.onSecondary,fontWeight: FontWeight.w900),), //todo update text colour or fix frame
                   )
                 ])
               ])),
@@ -195,7 +301,7 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
   );
 }
 
-details() {
+details(data) {
   return Column(
     children: [
       Text('Skills: Perception +3'),
@@ -219,12 +325,91 @@ details() {
   );
 }
 
-Widget choser(int index) {
+Widget choser(int index, data) {
   if (index == 0) {
-    return details();
+    return details(data);
   } else if (index == 1) {
     return Text('aahhh');
   } else {
     return Text('bbhhh');
   }
+}
+
+
+Widget loading(context){
+  return Scaffold(
+      body: Shimmer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ShimmerLoading(
+                      child: photoBorder( const Image(
+                        image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'), //todo placeholder image and photoborder needs constraints
+                      ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ShimmerLoading(
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(12), // Rounded corners
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            ShimmerLoading(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                margin: EdgeInsets.symmetric( horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                ),
+                child: Row(
+                  children: [
+                    Column(children:[
+                      Text('STR',style: TextStyle(fontWeight: FontWeight.bold)),
+                      Icon(Stat.stat,size: 60),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(child: ShimmerLoading(
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                margin: EdgeInsets.fromLTRB(8,10,8,32), // todo fix all margins
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                ),
+              ),
+            ),
+            )
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        //todo get name as arg for title
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios,
+          ),
+        ),
+      )
+  );
 }
