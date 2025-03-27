@@ -37,13 +37,14 @@ class _MonsterSearch extends State<MonsterSearch> {
   List bookmarked = [];
 
   createQuery() {
-    var monsterQuery = MonsterRef.get();
+    var monsterQuery = MonsterRef.limit(20).get();
     locator<ActiveFilters>().getOn() ?
     monsterQuery = MonsterRef
         .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
         .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
+        .limit(20)
         .get()
-        : monsterQuery = MonsterRef.get();
+        : monsterQuery = MonsterRef.limit(20).get();
     return monsterQuery;
   }
 

@@ -25,7 +25,7 @@ class _MonsterView extends State<MonsterView> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection('Monsters').doc(
+        future: FirebaseFirestore.instance.collection('Monsters').doc( //todo get doc from args
             getArgs()?[0])
             .get(),
         builder:
@@ -139,17 +139,17 @@ class _MonsterView extends State<MonsterView> {
                                       ],
                                     ),
                                     RichText(text:
-                                      TextSpan(text: '',
-                                          children: [
-                                            TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
-                                            TextSpan(text: statblock.get('speed')['walk']),
-                                            //todo function this??? \/\/\/
-                                            if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
-                                            if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
-                                            if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
-                                            if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
-                                            ]
-                                      )
+                                    TextSpan(text: '',
+                                        children: [
+                                          TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: statblock.get('speed')['walk']),
+                                          //todo function this??? \/\/\/
+                                          if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
+                                          if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
+                                          if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
+                                          if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
+                                        ]
+                                    )
                                     ),
                                     //todo bold Speed
                                   ],
@@ -301,19 +301,94 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
   );
 }
 
+detailsNumberRow(data,String field)
+{
+  if (data[field].isNotEmpty) {
+    var rowString = '';
+    for (var i in data[field].keys) {
+      var rowLine = '';
+      rowLine = (i + ' +' + data[field][i].toString());
+      if (i != data[field].keys.last) {
+        rowLine += ', ';
+      }
+      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
+      rowString += rowLine;
+    }
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(field[0].toUpperCase() + field.substring(1) + ' ',
+            style: TextStyle(fontWeight: FontWeight.w900),),
+          Text(rowString)
+        ]
+    );
+  }
+  return SizedBox.shrink();
+}
+
+detailsTextRow(data,String field)
+{
+  if (data[field].isNotEmpty) {
+    var rowString = '';
+    for (var i in data[field]) {
+      var rowLine = '';
+      rowLine = (i + ' ');
+      if (i != data[field].last) {
+        rowLine += ', ';
+      }
+      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
+      rowString += rowLine;
+    }
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(field[0].toUpperCase() + field.substring(1) + ' ',
+            style: TextStyle(fontWeight: FontWeight.w900),),
+          Text(rowString)
+        ]
+    );
+  }
+  return SizedBox.shrink();
+}
+
+detailsSensesRow(data, field){
+  if (data[field].isNotEmpty) {
+    var rowString = '';
+    for (var i in data[field].keys) {
+      var rowLine = '';
+      rowLine = (i + ' ' + data[field][i].toString());
+      if (i != data[field].keys.last) {
+        rowLine += ', ';
+      }
+      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
+      rowString += rowLine;
+    }
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(field[0].toUpperCase() + field.substring(1) + ' ',
+            style: TextStyle(fontWeight: FontWeight.w900),),
+          Text(rowString)
+        ]
+    );
+  }
+  return SizedBox.shrink();
+}
+
 details(data) {
   return Column(
     children: [
-      Text('Skills: Perception +3'),
-      Text('Resistances: Necrotic'),
-      Text('Resistances: Necrotic'),
-      Text('Resistances: Necrotic'),
-      Text('Resistances: Necrotic'),
-      Text('Languages: Necrotic'),
+      detailsNumberRow(data,'saving_throws'),
+      detailsNumberRow(data,'skills'),
+      detailsTextRow(data,'damage_resistances'),
+      detailsTextRow(data,'damage_immunities'),
+      detailsTextRow(data,'damage_vulnerabilities'),
+      detailsSensesRow(data,'senses'),
+      detailsTextRow(data,'languages'),
 
-      Text('Traits', style: TextStyle(fontWeight: FontWeight.w900)),
       Divider(),
-      Text('''Legendary Resistance (3/Day). If the tarrasque fails a saving throw, it can choose to succeed instead.
+      Text('Traits', style: TextStyle(fontWeight: FontWeight.w900)),//todo programtically fill \/\/\/
+      Text('''Legendary Resistance (3/Day). If the tarrasque fails a saving throw, it can choose to succeed instead. 
 \n
           Magic Resistance. The tarrasque has advantage on saving throws against spells and other magical effects.
 \n
