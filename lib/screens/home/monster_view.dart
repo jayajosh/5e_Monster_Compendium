@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
+import '../../components/monster_view_factory/actions_factory.dart';
 import '../../components/monster_view_factory/details_factory.dart';
 import '../../components/loading_shimmer.dart';
 import '../../components/stat_icons.dart';
 
 ValueNotifier<int> indexNotifier = ValueNotifier<int>(0);
+Widget noData = Center(child: Text("Data does not exist")); //todo column center and maybe add icon
+
+
 class MonsterView extends StatefulWidget {
   @override
   _MonsterView createState() => _MonsterView();
@@ -215,7 +219,10 @@ class _MonsterView extends State<MonsterView> {
                                 child: ValueListenableBuilder<int>(
                                   valueListenable: indexNotifier,
                                   builder: (context, index, child) {
-                                    return choser(index,statblock); // Call function instead of using a class
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: getMonsterSection(index,statblock),
+                                    ); // Call function instead of using a class
                                   },
                                 ),
                               ),
@@ -299,13 +306,19 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
   );
 }
 
-Widget choser(int index, data) {
+checkIfSectionEmpty(Column func){
+  if(func.children.isEmpty){return noData;}
+  return func;
+}
+
+Widget getMonsterSection(int index, data) {
   if (index == 0) {
-    return details(data);
+    return checkIfSectionEmpty(details(data));
   } else if (index == 1) {
-    return Text('aahhh');
+    return checkIfSectionEmpty(actions(data));
   } else {
-    return Text('bbhhh');
+    if(data['monster_description'] == ''){return noData;}
+    else{return Align(alignment: Alignment.topLeft, child: Text(data['monster_description']));}
   }
 }
 

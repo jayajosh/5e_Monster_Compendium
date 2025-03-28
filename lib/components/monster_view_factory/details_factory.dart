@@ -75,9 +75,9 @@ detailsSensesRow(data, field){
 }
 
 detailsTraitsBlock(data){
-  List<Widget> traitsBlock = [] ;
+  List<Widget> traitsBlock = [];
   if (data['special_abilities'].isNotEmpty) {
-    traitsBlock.add(Divider());
+    traitsBlock.add(otherDetailsCheck(data,Divider()));
     traitsBlock.add(Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))));
     for(var i in data['special_abilities']){
       traitsBlock.add(RichText(text: TextSpan(children: [TextSpan(text: i['name']+' ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
@@ -87,10 +87,18 @@ detailsTraitsBlock(data){
   return traitsBlock;
 }
 
+otherDetailsCheck(data,returnWidget){
+  if(data['saving_throws'].isEmpty && data['skills'].isEmpty && data['damage_resistances'].isEmpty && data['damage_immunities'].isEmpty && data['damage_vulnerabilities'].isEmpty && data['senses'].isEmpty && data['languages'].isEmpty){
+    return SizedBox.shrink();
+  }
+  return returnWidget;
+}
+
 details(data) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      otherDetailsCheck(data,Center(child: Text('Other Details', style: TextStyle(fontWeight: FontWeight.w900)))),
       detailsNumberRow(data,'saving_throws'),
       detailsNumberRow(data,'skills'),
       detailsTextRow(data,'damage_resistances'),
