@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
+import '../../components/monster_view_factory/details_factory.dart';
 import '../../components/loading_shimmer.dart';
 import '../../components/stat_icons.dart';
 
@@ -18,7 +19,6 @@ class _MonsterView extends State<MonsterView> {
         .settings
         .arguments as List?;
 
-    if(List == null){print('yikers');}
     return args;
   }
 
@@ -50,8 +50,6 @@ class _MonsterView extends State<MonsterView> {
                 body: Center(child: Text("Data does not exist"))
             );
           }
-
-          //if (snapshot.connectionState == ConnectionState.done) {print(snapshot.data?.get('name')+'oogabooga');return loading(context);}
 
           if (snapshot.connectionState == ConnectionState.done) {
             var statblock = snapshot.data!;
@@ -298,105 +296,6 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
       ),
       onTap: (){indexNotifier.value = i;},
     ),
-  );
-}
-
-detailsNumberRow(data,String field)
-{
-  if (data[field].isNotEmpty) {
-    var rowString = '';
-    for (var i in data[field].keys) {
-      var rowLine = '';
-      rowLine = (i + ' +' + data[field][i].toString());
-      if (i != data[field].keys.last) {
-        rowLine += ', ';
-      }
-      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
-      rowString += rowLine;
-    }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
-            style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
-    );
-  }
-  return SizedBox.shrink();
-}
-
-detailsTextRow(data,String field)
-{
-  if (data[field].isNotEmpty) {
-    var rowString = '';
-    for (var i in data[field]) {
-      var rowLine = '';
-      rowLine = (i + ' ');
-      if (i != data[field].last) {
-        rowLine += ', ';
-      }
-      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
-      rowString += rowLine;
-    }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
-            style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
-    );
-  }
-  return SizedBox.shrink();
-}
-
-detailsSensesRow(data, field){
-  if (data[field].isNotEmpty) {
-    var rowString = '';
-    for (var i in data[field].keys) {
-      var rowLine = '';
-      rowLine = (i + ' ' + data[field][i].toString());
-      if (i != data[field].keys.last) {
-        rowLine += ', ';
-      }
-      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
-      rowString += rowLine;
-    }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
-            style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
-    );
-  }
-  return SizedBox.shrink();
-}
-
-details(data) {
-  return Column(
-    children: [
-      detailsNumberRow(data,'saving_throws'),
-      detailsNumberRow(data,'skills'),
-      detailsTextRow(data,'damage_resistances'),
-      detailsTextRow(data,'damage_immunities'),
-      detailsTextRow(data,'damage_vulnerabilities'),
-      detailsSensesRow(data,'senses'),
-      detailsTextRow(data,'languages'),
-
-      Divider(),
-      Text('Traits', style: TextStyle(fontWeight: FontWeight.w900)),//todo programtically fill \/\/\/
-      Text('''Legendary Resistance (3/Day). If the tarrasque fails a saving throw, it can choose to succeed instead. 
-\n
-          Magic Resistance. The tarrasque has advantage on saving throws against spells and other magical effects.
-\n
-          Reflective Carapace. Any time the tarrasque is targeted by a magic missile spell, a line spell, or a spell that requires a ranged attack roll, roll a d6. On a 1 to 5, the tarrasque is unaffected. On a 6, the tarrasque is unaffected, and the effect is reflected back at the caster as though it originated from the tarrasque, turning the caster into the target.
-\n
-          Siege Monster. The tarrasque deals double damage to objects and structures.''')
-
-    ],
   );
 }
 
