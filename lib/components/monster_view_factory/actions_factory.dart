@@ -4,7 +4,7 @@ actionRow(data){
   List<Widget> actionsBlock = [];
   if (data.isNotEmpty) {
     for(var i in data) {
-      actionsBlock.add(Text.rich(TextSpan(children: [TextSpan(text: i['name']+'. ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
+      actionsBlock.add(Text.rich(TextSpan(children: [TextSpan(text: '${i['name']}. ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
       if(i != data.last){actionsBlock.add(Text(''));}
     }
   }

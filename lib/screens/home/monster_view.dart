@@ -140,7 +140,7 @@ class _MonsterView extends State<MonsterView> {
                                         ),
                                       ],
                                     ),
-                                    RichText(text:
+                                    Text.rich(
                                     TextSpan(text: '',
                                         children: [
                                           TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),

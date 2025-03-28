@@ -6,7 +6,7 @@ detailsNumberRow(data,String field)
     var rowString = '';
     for (var i in data[field].keys) {
       var rowLine = '';
-      rowLine = (i + ' +' + data[field][i].toString());
+      rowLine = '$i +${data[field][i]}';
       if (i != data[field].keys.last) {
         rowLine += ', ';
       }
@@ -16,7 +16,7 @@ detailsNumberRow(data,String field)
     return Text.rich(
         TextSpan(
         children: [
-          TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
+          TextSpan(text: '${field[0].toUpperCase()}${field.substring(1)} ',
             style: TextStyle(fontWeight: FontWeight.w900),),
           TextSpan(text: rowString)
         ])
@@ -29,8 +29,6 @@ detailsTextRow(data,String field)
 {
   if (data[field].isNotEmpty) {
     var rowString = '';
-    print(field);
-    print(data[field]);
     for (var i in data[field]) {
       var rowLine = '';
       rowLine = (i + '');
@@ -43,7 +41,7 @@ detailsTextRow(data,String field)
     return Text.rich(
         TextSpan(
             children: [
-              TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
+              TextSpan(text: '${field[0].toUpperCase()}${field.substring(1)}',
                 style: TextStyle(fontWeight: FontWeight.w900),),
               TextSpan(text: rowString)
             ])
@@ -57,7 +55,8 @@ detailsSensesRow(data, field){
     var rowString = '';
     for (var i in data[field].keys) {
       var rowLine = '';
-      rowLine = (i + ' ' + data[field][i].toString());
+      //rowLine = (i + ' ' + data[field][i].toString());
+      rowLine = '$i ${data[field][i].toString()}';
       if (i != data[field].keys.last) {
         rowLine += ', ';
       }
