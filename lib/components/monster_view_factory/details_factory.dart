@@ -13,13 +13,13 @@ detailsNumberRow(data,String field)
       rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
       rowString += rowLine;
     }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+    return Text.rich(
+        TextSpan(
         children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
+          TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
             style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
+          TextSpan(text: rowString)
+        ])
     );
   }
   return SizedBox.shrink();
@@ -29,22 +29,24 @@ detailsTextRow(data,String field)
 {
   if (data[field].isNotEmpty) {
     var rowString = '';
+    print(field);
+    print(data[field]);
     for (var i in data[field]) {
       var rowLine = '';
-      rowLine = (i + ' ');
+      rowLine = (i + '');
       if (i != data[field].last) {
         rowLine += ', ';
       }
       rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
       rowString += rowLine;
     }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
-            style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
+    return Text.rich(
+        TextSpan(
+            children: [
+              TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
+                style: TextStyle(fontWeight: FontWeight.w900),),
+              TextSpan(text: rowString)
+            ])
     );
   }
   return SizedBox.shrink();
@@ -62,13 +64,13 @@ detailsSensesRow(data, field){
       rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
       rowString += rowLine;
     }
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(field[0].toUpperCase() + field.substring(1) + ' ',
-            style: TextStyle(fontWeight: FontWeight.w900),),
-          Text(rowString)
-        ]
+    return Text.rich(
+        TextSpan(
+            children: [
+              TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
+                style: TextStyle(fontWeight: FontWeight.w900),),
+              TextSpan(text: rowString)
+            ])
     );
   }
   return SizedBox.shrink();
@@ -80,7 +82,7 @@ detailsTraitsBlock(data){
     traitsBlock.add(otherDetailsCheck(data,Divider()));
     traitsBlock.add(Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))));
     for(var i in data['special_abilities']){
-      traitsBlock.add(RichText(text: TextSpan(children: [TextSpan(text: i['name']+' ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
+      traitsBlock.add(Text.rich(TextSpan(children: [TextSpan(text: i['name']+' ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
       if(i != data['special_abilities'].last){traitsBlock.add(Text(''));}
     }
   }
@@ -107,7 +109,7 @@ details(data) {
       detailsSensesRow(data,'senses'),
       detailsTextRow(data,'languages'),
 
-      for(var i in detailsTraitsBlock(data)) i,
+      if(data.data().containsKey('special_abilities'))for(var i in detailsTraitsBlock(data)) i,
     ],
   );
 }
