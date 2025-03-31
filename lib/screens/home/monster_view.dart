@@ -144,8 +144,9 @@ class _MonsterView extends State<MonsterView> {
                                     TextSpan(text: '',
                                         children: [
                                           TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
-                                          TextSpan(text: statblock.get('speed')['walk']),
+                                          //TextSpan(text: statblock.get('speed')['walk']),
                                           //todo function this??? \/\/\/
+                                          if(statblock.get('speed')['walk'] != null)TextSpan(text: snapshot.data!.get('speed')['walk']),
                                           if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
                                           if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
                                           if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
@@ -153,7 +154,6 @@ class _MonsterView extends State<MonsterView> {
                                         ]
                                     )
                                     ),
-                                    //todo bold Speed
                                   ],
                                 )
                             ),

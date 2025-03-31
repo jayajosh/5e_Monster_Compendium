@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/services/active_filters.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Welcome/sign_up_page.dart';
@@ -78,8 +79,8 @@ class _Main extends State<Main> with WidgetsBindingObserver{
             '/WelcomePage': (context) => WelcomePage(),
             '/LoginPage': (context) => LoginPage(),
             '/SignUpPage': (context) => SignUpPage(),
-            '/Home/MonsterView': (context) => MonsterView()
-
+            '/Home/MonsterView': (context) => MonsterView(),
+            '/Home/AddMonster': (context) => AddMonster(),
           },
         )
 

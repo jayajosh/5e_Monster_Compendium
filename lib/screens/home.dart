@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
 import '../Screens/Welcome/login_page.dart';
 import '../Screens/Welcome/sign_up_page.dart';
@@ -8,6 +9,7 @@ import '../components/center_button_nav.dart';
 import '../components/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
 import '../services/active_filters.dart';
+import '../services/generate_statblock.dart';
 import '/services/auth.dart';
 
 import '../components/rounded_button.dart';
@@ -15,20 +17,19 @@ import '../components/rounded_button.dart';
 class Home extends StatefulWidget {
   Home({int? currentIndex});
 
-
-
   _Home createState() => _Home();
 }
 
 class _Home extends State<Home>{
   late List<Widget> _page = [
     MonsterSearch(key: monsterSearchKey),
-    Center(child: RoundedButton(text: "SignOut1", press: () {})),
+    Center(child: RoundedButton(text: "SignOut2", press: () {})),
     Center(child: RoundedButton(text: "SignOut3", press: () {})),
-    LoginPage(),
-    SignUpPage()
+    AddMonster(),
+    Center(child: StatblockGenerator()),
   ];
   GlobalKey<State<MonsterSearch>> monsterSearchKey = new GlobalKey<State<MonsterSearch>>();
+
 
   int currentIndex = 0;
   void onTapped(int index) {
@@ -116,8 +117,8 @@ class _Home extends State<Home>{
                 label: 'Edit',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.qr_code_scanner),
-                label: 'QR Scanner',
+                icon: Icon(Icons.auto_awesome),
+                label: 'Generate',
               ),
             ],
 /*          showUnselectedLabels: false,

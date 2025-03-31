@@ -55,7 +55,6 @@ detailsSensesRow(data, field){
     var rowString = '';
     for (var i in data[field].keys) {
       var rowLine = '';
-      //rowLine = (i + ' ' + data[field][i].toString());
       rowLine = '$i ${data[field][i].toString()}';
       if (i != data[field].keys.last) {
         rowLine += ', ';
