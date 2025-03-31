@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
-import '../Screens/Welcome/login_page.dart';
-import '../Screens/Welcome/sign_up_page.dart';
 import '../components/avatar.dart';
 import '../components/bookmark_drawer_setup.dart';
 import '../components/center_button_nav.dart';
 import '../components/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
-import '../services/active_filters.dart';
 import '../services/generate_statblock.dart';
-import '/services/auth.dart';
 
 import '../components/rounded_button.dart';
 

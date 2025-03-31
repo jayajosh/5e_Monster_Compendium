@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
-import 'package:monster_compendium/services/active_filters.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Welcome/sign_up_page.dart';
 import 'locator.dart';
@@ -9,7 +8,6 @@ import 'screens/Welcome/splash.dart';
 import 'screens/Home/monster_view.dart';
 import 'screens/home.dart';
 import 'services/navigation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'Screens/Welcome/login_page.dart';
 import 'Screens/Welcome/welcome_page.dart';
 import 'services/themes.dart';

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
 import '../../../components/monster_fields.dart';
