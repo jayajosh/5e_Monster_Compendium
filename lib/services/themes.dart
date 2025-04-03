@@ -134,7 +134,7 @@ TextStyle TitleFont() {
       letterSpacing: 1.2,
       shadows: [
   Shadow(
-  color: Colors.black.withOpacity(0.2),
+  color: Colors.black,
   blurRadius: 3,
   offset: Offset(1, 1),
   )]);
