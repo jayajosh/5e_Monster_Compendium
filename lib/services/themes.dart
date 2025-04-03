@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future <SharedPreferences> _prefs = SharedPreferences.getInstance();
 
-class ThemeNotifier with ChangeNotifier {
+class ThemeNotifier with ChangeNotifier, WidgetsBindingObserver {
 
   ThemeMode _themeMode= ThemeMode.system;
   ThemeMode getThemeMode() {return _themeMode;}
@@ -65,12 +65,33 @@ class ThemeNotifier with ChangeNotifier {
   );
 
   ThemeNotifier() {
-    getThemePrefs().then((value) {
-      if (value == false) {_themeMode = ThemeMode.light;}
-      else if (value == true) {_themeMode = ThemeMode.dark;}
-      else{_themeMode = ThemeMode.system;}
-      notifyListeners();}
-      );}
+    WidgetsBinding.instance.addObserver(this); // Start listening
+    _loadThemeFromPrefs();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this); // Stop listening
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    if (_themeMode == ThemeMode.system) {
+      notifyListeners(); // Rebuild when system theme changes
+    }
+  }
+
+  _loadThemeFromPrefs() async {
+    final prefs = await _prefs;
+    final isDark = prefs.getBool('Theme');
+    if (isDark == null) {
+      _themeMode = ThemeMode.system;
+    } else {
+      _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    }
+    notifyListeners();
+  }
 
 
 
@@ -82,8 +103,12 @@ class ThemeNotifier with ChangeNotifier {
 
   void setSystemTheme() async {
     final prefs = await _prefs;
-    prefs.remove("Theme");
-    _themeMode = ThemeMode.system;
+    prefs.remove("Theme"); // Remove the saved preference
+
+    // Determine the current system brightness
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _themeMode = brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light;
+
     notifyListeners();
   }
 
