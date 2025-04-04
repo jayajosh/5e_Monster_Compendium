@@ -124,12 +124,12 @@ class _AddMonster extends State<AddMonster> {
               ),
               child: Row(
                 children: [
-                  /*scoreBlock(context, 'strength', statblock),
-                  scoreBlock(context, 'dexterity', statblock),
-                  scoreBlock(context, 'constitution', statblock),
-                  scoreBlock(context, 'intelligence', statblock),
-                  scoreBlock(context, 'wisdom', statblock),
-                  scoreBlock(context, 'charisma', statblock),*/
+                  ScoreButton(stat: 'strength'),
+                  ScoreButton(stat: 'dexterity'),
+                  ScoreButton(stat: 'constitution'),
+                  ScoreButton(stat: 'intelligence'),
+                  ScoreButton(stat: 'wisdom'),
+                  ScoreButton(stat: 'charisma'),
                 ],
               ),
             ),

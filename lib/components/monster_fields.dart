@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monster_compendium/components/stat_icons.dart';
 
 class EditBorderButton extends StatelessWidget {
   final double? width;
@@ -59,8 +60,6 @@ class EditBorderButton extends StatelessWidget {
   }
 }
 
-
-
 class MonsterTextField extends StatelessWidget {
   final TextEditingController controller;
 
@@ -88,7 +87,7 @@ class MonsterTextField extends StatelessWidget {
 
 class CrDropDown extends StatelessWidget { //todo make width dynamic
   final TextEditingController controller;
-  CrDropDown({super.key, required this.controller});
+  const CrDropDown({super.key, required this.controller});
 
   List<DropdownMenuEntry<double?>> crList() {
     return [
@@ -111,7 +110,7 @@ class CrDropDown extends StatelessWidget { //todo make width dynamic
         dropdownMenuEntries: crList(),
         menuHeight: 250,
         width: 150,
-        onSelected: (cr){print(cr);},
+        onSelected: (cr){print(cr);},// todo fill out storage to be uploaded
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -120,14 +119,24 @@ class CrDropDown extends StatelessWidget { //todo make width dynamic
           ),
         )
     );
-    //todo add initialSelection: programtically??
+    //todo add initialSelection: programmatically??
   }
 }
 
-class MonsterIconButton extends StatelessWidget {
-  final TextEditingController controller;
+class MonsterIconButton extends StatefulWidget {
   final IconData icon;
-  const MonsterIconButton({super.key, required this.controller,required this.icon});
+  final String text1;
+  final String text2;
+  const MonsterIconButton({super.key,required this.icon, required this.text1, required this.text2,});
+
+  @override
+  _MonsterIconButton createState() => _MonsterIconButton();
+}
+
+class _MonsterIconButton extends State<MonsterIconButton>{
+
+  TextEditingController text1Controller = TextEditingController();
+  TextEditingController text2Controller = TextEditingController();
 
   @override
   Widget build(BuildContext context)
@@ -135,8 +144,20 @@ class MonsterIconButton extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          print('dialog moment'); //todo dialog or something for ac+type/hp+hitdice ect
+        onTap: () async {
+          final result = await showDialog<Map<String, String>>(
+            context: context,
+            builder: (BuildContext context) {
+              return IconDialog(text1: widget.text1,text2: widget.text2,text1Controller: text1Controller,text2Controller: text2Controller);
+            },
+          );
+
+          if (result != null) {
+            setState(() {
+              text1Controller.text = result['text1'] == null ? ' ' : result['text1']!;
+              text2Controller.text = result['text2'] == null ? ' ' : result['text2']!;
+            });
+          }
         },
         borderRadius: BorderRadius.circular(5),
         child: Container(
@@ -144,12 +165,109 @@ class MonsterIconButton extends StatelessWidget {
             border: Border.all(color: Theme.of(context).colorScheme.onSurface),
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Icon(icon,
-              color: Theme.of(context).colorScheme.secondary, size: 64),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(widget.icon, color: Theme.of(context).colorScheme.secondary, size: 64),
+              Column(
+                children: [
+                  Text(text1Controller.text,style: TextStyle(fontWeight: FontWeight.w900),),
+                  Text('(${text2Controller.text})',style: TextStyle(fontWeight: FontWeight.w900),textAlign: TextAlign.center,)
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
-    //todo add initialSelection: programtically??
+    //todo add initialSelection: programmatically??
+  }
+}
+
+class IconDialog extends StatefulWidget{
+  final String text1;
+  final String text2;
+  final TextEditingController text1Controller;
+  final TextEditingController text2Controller;
+
+  const IconDialog({super.key, required this.text1, required this.text2, required this.text1Controller, required this.text2Controller});
+
+  @override
+  _IconDialogState createState() => _IconDialogState();
+}
+
+class _IconDialogState extends State<IconDialog>{ //todo change aesthetics => make text field closer to text - bold text
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog.adaptive(
+      content: Material(
+        color: Colors.transparent,
+        child: Column(children: [
+          Row(children: [
+            Expanded(child: Text('${widget.text1}:')),
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height / 20,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 3.0),
+                  child: TextField(
+                    controller: widget.text1Controller, //todo maybe swap to row index
+                    keyboardType: TextInputType.number, // Set keyboard type
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                    ],
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],),
+          Row(children: [
+            Expanded(child: Text('${widget.text2}:')),
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height / 20,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 3.0),
+                  child: TextField(
+                    // todo controller: textControllers[rowIndex], // Use controller
+                    controller: widget.text2Controller,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],),
+        ],),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop({
+              'text1': widget.text1Controller.text,
+              'text2': widget.text2Controller.text,
+            });
+          },
+          child: Text('OK'),
+        ),
+      ],
+    );
   }
 }
 
@@ -178,14 +296,12 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
               speeds: speeds,
               onSpeedsChanged: (Map<String, String> updatedSpeeds) {
                 speeds = updatedSpeeds;
-                print('test $speeds');
               },
             );
           },
         ).then((updatedSpeeds) {
           if (updatedSpeeds != null) {
             setState(() {
-              print('state');
               speeds = updatedSpeeds;
             });
           }
@@ -197,10 +313,10 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
           children: [
             TextSpan(text: 'Speed ', style: TextStyle(fontWeight: FontWeight.bold)),
             if (speeds['walk'] != null) TextSpan(text: speeds['walk']),
-            if (speeds['burrow'] != null) TextSpan(text: ', Burrow ' + speeds['burrow']!),
-            if (speeds['climb'] != null) TextSpan(text: ', Climb ' + speeds['climb']!),
-            if (speeds['fly'] != null) TextSpan(text: ', Fly ' + speeds['fly']!),
-            if (speeds['swim'] != null) TextSpan(text: ', Swim ' + speeds['swim']!),
+            if (speeds['burrow'] != null) TextSpan(text: ', Burrow ${speeds['burrow']!}'),
+            if (speeds['climb'] != null) TextSpan(text: ', Climb ${speeds['climb']!}'),
+            if (speeds['fly'] != null) TextSpan(text: ', Fly ${speeds['fly']!}'),
+            if (speeds['swim'] != null) TextSpan(text: ', Swim ${speeds['swim']!}'),
           ],
         ),
       ),
@@ -369,7 +485,7 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
                 null;
               });
             },
-            child: Row(
+            child: Row( //todo make an action
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Add Speed'),
@@ -391,8 +507,8 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
         builder: (BuildContext context, StateSetter setState) {
           return SingleChildScrollView(
             child: Column(
-              children: makeSpeedsColumn(context),
               spacing: 4,
+              children: makeSpeedsColumn(context),
             ),
           );
         },
@@ -406,6 +522,180 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
           child: Text('OK'),
         ),
       ],
+    );
+  }
+}
+
+/*
+class ScoreButton extends StatefulWidget{
+  final String stat;
+  const ScoreButton({super.key, required this.stat});
+
+  @override
+  _ScoreButton createState() => _ScoreButton();
+}
+
+class _ScoreButton extends State<ScoreButton> {
+  TextEditingController statController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    String statText = widget.stat.substring(0,3).toUpperCase();
+    return Flexible(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+        child:  InkWell(
+          onTap: () {
+            print('Dialog Moment');
+          },
+          child: Stack(
+            children: [
+              Positioned(
+                right: -10,
+                top: 5,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(Icons.edit,
+                        shadows: <Shadow>[ // todo fix small border pixel
+                          Shadow(
+                            offset: Offset(7,0),
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                          ),
+                          Shadow(
+                            offset: Offset(7, -7),
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                          ),
+                          Shadow(
+                            offset: Offset(0, -7),
+                            color: Theme.of(context).colorScheme.surfaceContainerLow,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children:[
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    Flexible(child:
+                    Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Icon(Stat.stat,size: 60),
+                          Column(children: [
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,8),
+                              child: Text(statController.text,style: TextStyle(fontWeight: FontWeight.w900)),
+                            ),
+                            Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                              child: Text(statController.text,style: TextStyle(color: Theme.of(context).colorScheme.onSecondary,fontWeight: FontWeight.w900),), //todo update text colour or fix frame
+                            )
+                          ])
+                        ])),
+                  ]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+*/
+
+class ScoreButton extends StatefulWidget{
+  final String stat;
+  const ScoreButton({super.key, required this.stat});
+
+  @override
+  _ScoreButton createState() => _ScoreButton();
+}
+
+class _ScoreButton extends State<ScoreButton> {
+  modifier(String value){ //todo check
+    if (value.isNotEmpty) {
+      int? intValue = int.tryParse(value);
+      if (intValue != null) {
+        String modifier;
+        intValue <= 10
+            ? modifier = ((intValue - 10.1) / 2).round().toString()
+            : modifier = '+' + ((intValue - 10) / 2).truncate().toString();
+        return modifier;
+      }
+      else {return 0;}
+    }
+    else{return 0;}
+  }
+
+  TextEditingController statController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    statController.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    statController.removeListener(_onTextChanged); // Remove the listener.
+    statController.dispose();
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    // This function will be called whenever the text changes.
+    setState(() {
+      //todo add to monster
+    });
+    // You can perform any actions based on the new text here.
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String statText = widget.stat.substring(0,3).toUpperCase();
+    return Flexible(
+      child: InkWell(
+        onTap: () {
+          print('Dialog Moment '+widget.stat);
+        },
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children:[
+              Flexible(child: Center(child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)))),
+              Flexible(child:
+              Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Icon(Stat.stat,size: 60),
+                    Column(children: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                        child: SizedBox(height: 36,width:32,child: TextField(
+                          controller: statController,
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number, // Set keyboard type
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                          ],
+                        )),
+                      ),
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                        child: Text(modifier(statController.text).toString(),style: TextStyle(fontWeight: FontWeight.w900),),
+                      )
+                    ])
+                  ])),
+            ]),
+      ),
     );
   }
 }
