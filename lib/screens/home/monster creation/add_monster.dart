@@ -28,6 +28,8 @@ class _AddMonster extends State<AddMonster> {
   TextEditingController hpController = new TextEditingController();
   TextEditingController pbController = new TextEditingController();
 
+  List<String?> acStrings = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,12 +80,12 @@ class _AddMonster extends State<AddMonster> {
                                 children: [
                                   Expanded(
                                     child: Center(
-                                      child: MonsterIconButton(controller: acController,icon: Icons.shield_outlined,),
+                                      child: MonsterIconButton(icon: Icons.shield_outlined,text1: 'AC',text2: 'Type',)
+                                      ),
                                     ),
-                                  ),
                                   Expanded(
                                     child: Center(
-                                      child: MonsterIconButton(controller: acController,icon: Icons.favorite_outline,),
+                                      child: MonsterIconButton(icon: Icons.favorite_outline,text1: 'HP',text2: 'HitDice',),
                                   ),
                                   ),
                                 ],
