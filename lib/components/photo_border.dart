@@ -6,7 +6,6 @@ Widget photoBorder(image) {
   return Consumer<ThemeNotifier>(
     builder: (context, theme, _) {
       bool isDarkMode = theme.getThemeMode() == ThemeMode.dark;
-      print(isDarkMode);
       if (!isDarkMode) {
         return lightModeBorder(image);
       } else {
