@@ -573,7 +573,7 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
               child: Row( //todo make an action
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Add'),
+                  Text('Add Trait'),
                   Icon(Icons.add_circle_outline),
                 ],
               ),
