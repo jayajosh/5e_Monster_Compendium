@@ -57,7 +57,11 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
     TextEditingController typeController = TextEditingController();
     TextEditingController alignmentController = TextEditingController();
 
-    //Initialize the controllers with the current values.
+    final List<String> availableSizes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
+    final List<String> availableTypes = ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Humanoid', 'Monstrosity', 'Ooze', 'Plant', 'Undead'];
+    final List<String> availableAlignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good', 'Lawful Neutral', 'Neutral', 'Chaotic Neutral', 'Lawful Evil', 'Neutral Evil', 'Chaotic Evil', 'Unaligned'];
+
+
     final details = widget.bottomController.text.split(', ');
     if(details.length == 2){
       final sizeType = details[0].split(' ');
@@ -71,48 +75,76 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
     final result = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog.adaptive(
-          title: Text('Edit Details'),
-          content: Material(
-            color: Colors.transparent,
-            child: SingleChildScrollView(
+        return Material(
+          color: Colors.transparent,
+          child: AlertDialog.adaptive(
+            title: Text('Edit Details'),
+            content: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                //mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(labelText: 'Name'),
                   ),
-                  TextField(
-                    controller: sizeController,
-                    decoration: InputDecoration(labelText: 'Size'), //todo make dropdown
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: DropdownMenu(
+                      controller: sizeController,
+                      hintText: 'Size',
+                        dropdownMenuEntries: availableSizes.map<DropdownMenuEntry<String>>((String value) {
+                          return DropdownMenuEntry<String>(
+                            value: value,
+                            label: value,
+                          );
+                        }).toList()
+                    ),
                   ),
-                  TextField(
-                    controller: typeController,
-                    decoration: InputDecoration(labelText: 'Type'), //todo make dropdown??
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: DropdownMenu(
+                        controller: typeController,
+                        hintText: 'Type',
+                        dropdownMenuEntries: availableTypes.map<DropdownMenuEntry<String>>((String value) {
+                          return DropdownMenuEntry<String>(
+                            value: value,
+                            label: value,
+                          );
+                        }).toList()
+                    ),
                   ),
-                  TextField(
-                    controller: alignmentController,
-                    decoration: InputDecoration(labelText: 'Alignment'), //todo make dropdown
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: DropdownMenu(
+                        controller: alignmentController,
+                        hintText: 'Alignment',
+                        dropdownMenuEntries: availableAlignments.map<DropdownMenuEntry<String>>((String value) {
+                          return DropdownMenuEntry<String>(
+                            value: value,
+                            label: value,
+                          );
+                        }).toList()
+                    ),
                   ),
                 ],
               ),
             ),
+            actions: <Widget>[ //todo give the other dialogs this
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: Text('Save'),
+                onPressed: () {
+                  final combinedDetails =
+                      '${sizeController.text} ${typeController.text}, ${alignmentController.text}';
+                  Navigator.of(context).pop(combinedDetails);
+                },
+              ),
+            ],
           ),
-          actions: <Widget>[ //todo give the other dialogs this
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: Text('Save'),
-              onPressed: () {
-                final combinedDetails =
-                    '${sizeController.text} ${typeController.text}, ${alignmentController.text}';
-                Navigator.of(context).pop(combinedDetails);
-              },
-            ),
-          ],
         );
       },
     );
