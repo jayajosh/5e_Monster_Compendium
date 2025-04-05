@@ -678,7 +678,7 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
   }
 }
 
-class ScoreEdit extends StatefulWidget{
+class ScoreEdit extends StatefulWidget{ //todo limit to 2 characters
   final String stat;
   const ScoreEdit({super.key, required this.stat});
 

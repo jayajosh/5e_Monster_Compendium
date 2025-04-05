@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/components/monster_add_factory/edit_details_factory.dart';
+import 'package:monster_compendium/components/monster_edit_factory/edit_details_factory.dart';
 import 'package:monster_compendium/components/photo_border.dart';
-import '../../../components/monster_add_factory/monster_fields_factory.dart';
+import '../../../components/monster_edit_factory/monster_fields_factory.dart';
 import '../../../components/monster_view_factory/actions_factory.dart';
 import '../../../components/monster_view_factory/details_factory.dart';
 import '../../../components/loading_shimmer.dart';
@@ -281,7 +281,7 @@ checkIfSectionEmpty(Column func){
 
 Widget getMonsterSection(int index) {
   if (index == 0) {
-    return addDetails();
+    return addDetails(); //todo dont dispose on change, maybe create on init and call from there
   } else if (index == 1) {
     return addDetails();
   } else {
