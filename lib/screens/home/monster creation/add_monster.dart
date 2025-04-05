@@ -26,6 +26,7 @@ class _AddMonster extends State<AddMonster> {
   //TextEditingController typeController = new TextEditingController();
   //TextEditingController alignmentController = new TextEditingController();
   TextEditingController crController = new TextEditingController();
+  TextEditingController descriptionController = new TextEditingController();
   //TextEditingController acController = new TextEditingController();
   //TextEditingController hpController = new TextEditingController();
   //TextEditingController pbController = new TextEditingController();
@@ -181,7 +182,7 @@ class _AddMonster extends State<AddMonster> {
                               child: ValueListenableBuilder<int>(
                                 valueListenable: indexNotifier,
                                 builder: (context, index, child) {
-                                  return getMonsterSection(index); // Call function instead of using a class
+                                  return getMonsterSection(index,descriptionController); // Call function instead of using a class
                                 },
                               ),
                             ),
@@ -279,14 +280,23 @@ checkIfSectionEmpty(Column func){
   return func;
 }
 
-Widget getMonsterSection(int index) {
+Widget getMonsterSection(int index, descriptionController) {
   if (index == 0) {
     return addDetails(); //todo dont dispose on change, maybe create on init and call from there
   } else if (index == 1) {
     return addDetails();
   } else {
     //if(data['monster_description'] == ''){return noData;}
-    return Align(alignment: Alignment.topLeft, child: Text('monster_description'));
+    return TextField(
+      maxLines: null,
+      controller: descriptionController,
+      decoration: const InputDecoration(
+        hintText: 'Trait Description',
+        labelText: 'Trait Description',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
   }
 }
 

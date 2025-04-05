@@ -327,7 +327,7 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
   Map<int,TextEditingController?> controllers = {};
   Map<int,TextEditingController?> numControllers = {};
 
-  Widget detailNumberRow(key,controller) {
+  Widget detailSensesRow(key,controller) {
     //final size = MediaQuery.of(context).size;
 
     return Container(
@@ -381,14 +381,14 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
   }
 
   makeDetailsRow() {
-    List<Widget> detailNumberRows = [];
+    List<Widget> detailSensesRows = [];
 
     controllers.forEach((rowIndex, controller) {
-      detailNumberRows.add(detailNumberRow(rowIndex,controller));
-      detailNumberRows.add(Container(height: 8));
+      detailSensesRows.add(detailSensesRow(rowIndex,controller));
+      detailSensesRows.add(Container(height: 8));
     });
 
-    detailNumberRows.add(
+    detailSensesRows.add(
       Material(
         color: Colors.transparent,
         child: InkWell(
@@ -421,7 +421,7 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
         ),
       ),
     );
-    return detailNumberRows;
+    return detailSensesRows;
   }
 
   rowName(){ //Todo add to monster view
@@ -459,61 +459,155 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
 
 }
 
-addDetailsSensesRow(data, field){
-  if (data[field].isNotEmpty) {
-    var rowString = '';
-    for (var i in data[field].keys) {
-      var rowLine = '';
-      rowLine = '$i ${data[field][i].toString()}';
-      if (i != data[field].keys.last) {
-        rowLine += ', ';
-      }
-      rowLine = (rowLine[0].toUpperCase() + rowLine.substring(1));
-      rowString += rowLine;
+class AddDetailsTraitsRow extends StatefulWidget {
+  const AddDetailsTraitsRow({super.key});
+
+  @override
+  _AddDetailsTraitsRow createState() => _AddDetailsTraitsRow();
+
+}
+
+class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
+
+  @override
+  void dispose() {
+    super.dispose();
+    controllers.forEach((index, controller){
+      controller?.dispose();
     }
-    return Text.rich(
-        TextSpan(
-            children: [
-              TextSpan(text: field[0].toUpperCase() + field.substring(1) + ' ',
-                style: TextStyle(fontWeight: FontWeight.w900),),
-              TextSpan(text: rowString)
-            ])
+    );
+    descControllers.forEach((index, controller){
+      controller?.dispose();
+    }
     );
   }
-  return SizedBox.shrink();
-}
 
-addDetailsTraitsBlock(data){
-  List<Widget> traitsBlock = [];
-  if (data['special_abilities'].isNotEmpty) {
-    traitsBlock.add(otherDetailsCheck(data,Divider()));
-    traitsBlock.add(Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))));
-    for(var i in data['special_abilities']){
-      traitsBlock.add(Text.rich(TextSpan(children: [TextSpan(text: i['name']+' ', style: TextStyle(fontWeight: FontWeight.w900)),TextSpan(text: i['desc'])])));
-      if(i != data['special_abilities'].last){traitsBlock.add(Text(''));}
-    }
-  }
-  return traitsBlock;
-}
+  Map<int,TextEditingController?> controllers = {};
+  Map<int,TextEditingController?> descControllers = {};
 
-otherDetailsCheck(data,returnWidget){
-  if(data['saving_throws'].isEmpty && data['skills'].isEmpty && data['damage_resistances'].isEmpty && data['damage_immunities'].isEmpty && data['damage_vulnerabilities'].isEmpty && data['senses'].isEmpty && data['languages'].isEmpty){
-    return SizedBox.shrink();
+  Widget traitsRow(key,controller) {
+    //final size = MediaQuery.of(context).size;
+
+    return Container(
+      //height: 45,
+      child: Center(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded( // Name
+                  child: TextField(
+                    maxLines: 1,
+                    controller: controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Trait Name',
+                      labelText: 'Trait Name',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: InkWell(
+                    onTap:() {
+                      setState(() {
+                        controllers.remove(key);
+                        descControllers.remove(key);
+                      })
+                      ;},
+                    child: Icon(CupertinoIcons.delete,color: Colors.red,),
+                  ),
+                ),
+              ],
+            ),
+            Container(height: 8),
+            Container( // Value
+              child: TextField(
+                maxLines: null,
+                controller: descControllers[key],
+                decoration: const InputDecoration(
+                  hintText: 'Trait Description',
+                  labelText: 'Trait Description',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                ),
+              ),
+            ),
+            Divider(thickness: 0.25,)
+          ],
+        ),
+      ),
+    );
   }
-  return returnWidget;
+
+  makeTraitsRow() {
+    List<Widget> traitsRows = [];
+
+    controllers.forEach((rowIndex, controller) {
+      traitsRows.add(traitsRow(rowIndex,controller));
+      traitsRows.add(Container(height: 8));
+    });
+
+    traitsRows.add(
+      Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              int newRowIndex = controllers.keys.length;
+              controllers[newRowIndex] =
+              new TextEditingController();
+              descControllers[newRowIndex] =
+              new TextEditingController();
+            });
+          },
+          child: Container(
+            //width: MediaQuery.of(context).size.width / 1.6, //todo fix widths to match
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: Row( //todo make an action
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Add'),
+                  Icon(Icons.add_circle_outline),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return traitsRows;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: makeTraitsRow(),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
 }
 
 addDetails() {
-  TextEditingController resistances = new TextEditingController();
-  TextEditingController immunities = new TextEditingController();
-  TextEditingController vulnerabilities = new TextEditingController();
-  TextEditingController languages = new TextEditingController();
-
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      //otherDetailsCheck(data,Center(child: Text('Other Details', style: TextStyle(fontWeight: FontWeight.w900)))),
       AddDetailsNumberRow(field: 'saving_throws'),
       Divider(thickness: 0.25,),
       AddDetailsNumberRow(field:'skills'),
@@ -528,7 +622,12 @@ addDetails() {
       Divider(thickness: 0.25,),
       AddDetailsTextRow(field: 'languages'),
       Divider(),
-
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2.0),
+        child: Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))),
+      ),
+      AddDetailsTraitsRow()
+      //todo add special abilities \/\/
       //if(data.data().containsKey('special_abilities'))for(var i in addDetailsTraitsBlock(data)) i,
     ],
   );
