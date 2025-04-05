@@ -103,7 +103,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: DropdownMenu(
+                    child: DropdownMenu( //todo maybe allow custom type
                         controller: typeController,
                         hintText: 'Type',
                         dropdownMenuEntries: availableTypes.map<DropdownMenuEntry<String>>((String value) {

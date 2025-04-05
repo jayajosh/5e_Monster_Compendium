@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:monster_compendium/components/monster_add_factory/edit_details_factory.dart';
 import 'package:monster_compendium/components/photo_border.dart';
-import '../../../components/monster_fields.dart';
+import '../../../components/monster_add_factory/monster_fields_factory.dart';
 import '../../../components/monster_view_factory/actions_factory.dart';
 import '../../../components/monster_view_factory/details_factory.dart';
 import '../../../components/loading_shimmer.dart';
@@ -176,14 +177,11 @@ class _AddMonster extends State<AddMonster> {
                             },),
                           Divider(),
                           Expanded( // Add this to allow scrolling inside
-                            child: SingleChildScrollView(
+                            child: SingleChildScrollView( //todo needs a height can be flexible through a column
                               child: ValueListenableBuilder<int>(
                                 valueListenable: indexNotifier,
                                 builder: (context, index, child) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: MonsterTextField(controller: crController)
-                                  ); // Call function instead of using a class
+                                  return getMonsterSection(index); // Call function instead of using a class
                                 },
                               ),
                             ),
@@ -281,14 +279,14 @@ checkIfSectionEmpty(Column func){
   return func;
 }
 
-Widget getMonsterSection(int index, data) {
+Widget getMonsterSection(int index) {
   if (index == 0) {
-    return checkIfSectionEmpty(details(data));
+    return addDetails();
   } else if (index == 1) {
-    return checkIfSectionEmpty(actions(data));
+    return addDetails();
   } else {
-    if(data['monster_description'] == ''){return noData;}
-    else{return Align(alignment: Alignment.topLeft, child: Text(data['monster_description']));}
+    //if(data['monster_description'] == ''){return noData;}
+    return Align(alignment: Alignment.topLeft, child: Text('monster_description'));
   }
 }
 
