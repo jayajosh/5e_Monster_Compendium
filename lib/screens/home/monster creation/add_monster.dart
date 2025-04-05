@@ -40,154 +40,162 @@ class _AddMonster extends State<AddMonster> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: 200,
-              child: Row(
+      resizeToAvoidBottomInset: true,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height, //todo move the scroll view or adjust to not allow scroll but auto scroll
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: photoBorder(const Image(
-                      image: NetworkImage(
-                          'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                    ),
+                  SizedBox(
+                    height: 200,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: photoBorder(const Image(
+                            image: NetworkImage(
+                                'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                          ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                              padding: EdgeInsets.all(8),
+                              margin: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .surfaceContainerLow,
+                                borderRadius: BorderRadius.circular(
+                                    12), // Rounded corners
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+
+                                      Center(child: CrDropDown(controller: crController)),
+                                    ],
+                                  ),
+                                  Center(child: Row(
+                                    children: [
+                                      //todo make a drop down auto fill xp
+                                      //MonsterTextField(controller: pbController)
+                                    ],
+                                  )),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Center(
+                                            child: MonsterIconButton(icon: Icons.shield_outlined,text1: 'AC',text2: 'Type',)
+                                            ),
+                                          ),
+                                        Expanded(
+                                          child: Center(
+                                            child: MonsterIconButton(icon: Icons.favorite_outline,text1: 'HP',text2: 'HitDice',),
+                                        ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Flexible(child:MoveSpeedButton()),
+                                  /*Text.rich(
+                                      TextSpan(text: '',
+                                          children: [
+                                            TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
+                                            *//*TextSpan(text: statblock.get('speed')['walk']),
+                                            if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
+                                            if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
+                                            if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
+                                            if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
+                                          *//*]
+                                      )
+                                  ),*/
+                                ],
+                              )
+                          ),
+                        )
+                      ],
                     ),
                   ),
-                  Expanded(
-                    child: Container(
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(
-                              12), // Rounded corners
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-
-                                Center(child: CrDropDown(controller: crController)),
-                              ],
-                            ),
-                            Center(child: Row(
-                              children: [
-                                //todo make a drop down auto fill xp
-                                //MonsterTextField(controller: pbController)
-                              ],
-                            )),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(
+                          12), // Rounded corners
+                    ),
+                    child: Row(
+                      children: [
+                        ScoreEdit(stat: 'strength'),
+                        ScoreEdit(stat: 'dexterity'),
+                        ScoreEdit(stat: 'constitution'),
+                        ScoreEdit(stat: 'intelligence'),
+                        ScoreEdit(stat: 'wisdom'),
+                        ScoreEdit(stat: 'charisma'),
+                      ],
+                    ),
+                  ),
+                  Flexible(fit: FlexFit.loose, child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8),
+                      margin: EdgeInsets.fromLTRB(8, 10, 8, 32),
+                      // todo fix all margins
+                      decoration: BoxDecoration(
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(
+                            12), // Rounded corners
+                      ),
+                      child: Column(
+                        children: [
+                          ValueListenableBuilder<int>(
+                            valueListenable: indexNotifier,
+                            builder: (context, index, child) {
+                              return Row(
                                 children: [
-                                  Expanded(
-                                    child: Center(
-                                      child: MonsterIconButton(icon: Icons.shield_outlined,text1: 'AC',text2: 'Type',)
-                                      ),
-                                    ),
-                                  Expanded(
-                                    child: Center(
-                                      child: MonsterIconButton(icon: Icons.favorite_outline,text1: 'HP',text2: 'HitDice',),
-                                  ),
-                                  ),
+                                  infoButton(
+                                      context, Icons.list_alt, 'Details', 0),
+                                  infoButton(
+                                      context, Icons.star, 'Actions', 1),
+                                  infoButton(
+                                      context, Icons.menu_book_outlined,
+                                      'Description', 2),
                                 ],
+                              );
+                            },),
+                          Divider(),
+                          Expanded( // Add this to allow scrolling inside
+                            child: SingleChildScrollView(
+                              child: ValueListenableBuilder<int>(
+                                valueListenable: indexNotifier,
+                                builder: (context, index, child) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    child: MonsterTextField(controller: crController)
+                                  ); // Call function instead of using a class
+                                },
                               ),
                             ),
-                            Expanded(child:MoveSpeedButton()),
-                            /*Text.rich(
-                                TextSpan(text: '',
-                                    children: [
-                                      TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
-                                      *//*TextSpan(text: statblock.get('speed')['walk']),
-                                      if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
-                                      if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
-                                      if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
-                                      if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
-                                    *//*]
-                                )
-                            ),*/
-                          ],
-                        )
-                    ),
+                          )
+                        ],
+                      )
+                  ),
                   )
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              margin: EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .surfaceContainerLow,
-                borderRadius: BorderRadius.circular(
-                    12), // Rounded corners
-              ),
-              child: Row(
-                children: [
-                  ScoreEdit(stat: 'strength'),
-                  ScoreEdit(stat: 'dexterity'),
-                  ScoreEdit(stat: 'constitution'),
-                  ScoreEdit(stat: 'intelligence'),
-                  ScoreEdit(stat: 'wisdom'),
-                  ScoreEdit(stat: 'charisma'),
-                ],
-              ),
-            ),
-            Expanded(child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8),
-                margin: EdgeInsets.fromLTRB(8, 10, 8, 32),
-                // todo fix all margins
-                decoration: BoxDecoration(
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(
-                      12), // Rounded corners
-                ),
-                child: Column(
-                  children: [
-                    ValueListenableBuilder<int>(
-                      valueListenable: indexNotifier,
-                      builder: (context, index, child) {
-                        return Row(
-                          children: [
-                            infoButton(
-                                context, Icons.list_alt, 'Details', 0),
-                            infoButton(
-                                context, Icons.star, 'Actions', 1),
-                            infoButton(
-                                context, Icons.menu_book_outlined,
-                                'Description', 2),
-                          ],
-                        );
-                      },),
-                    Divider(),
-                    Expanded( // Add this to allow scrolling inside
-                      child: SingleChildScrollView(
-                        child: ValueListenableBuilder<int>(
-                          valueListenable: indexNotifier,
-                          builder: (context, index, child) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: MonsterTextField(controller: crController)
-                            ); // Call function instead of using a class
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                )
-            ),
-            )
-          ],
+          ),
         ),
         appBar: AppBar(
           elevation: 0.0,
