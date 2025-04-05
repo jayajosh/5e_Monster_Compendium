@@ -186,8 +186,8 @@ class _AddMonster extends State<AddMonster> {
                                           maxLines: null,
                                           controller: descriptionController,
                                           decoration: const InputDecoration(
-                                            hintText: 'Trait Description',
-                                            labelText: 'Trait Description',
+                                            hintText: 'Monster Description',
+                                            labelText: 'Monster Description',
                                             border: OutlineInputBorder(),
                                             contentPadding: EdgeInsets.symmetric(horizontal: 8),
                                           ),
