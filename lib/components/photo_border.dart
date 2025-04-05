@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/themes.dart';
 
-Widget photoBorder(image) {
+Widget photoBorder(image) { //todo resize images to save ram (flutter inspector to see this)
   return Consumer<ThemeNotifier>(
     builder: (context, theme, _) {
       bool isDarkMode = theme.getThemeMode() == ThemeMode.dark;
