@@ -627,8 +627,6 @@ addDetails() {
         child: Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))),
       ),
       AddDetailsTraitsRow()
-      //todo add special abilities \/\/
-      //if(data.data().containsKey('special_abilities'))for(var i in addDetailsTraitsBlock(data)) i,
     ],
   );
 }

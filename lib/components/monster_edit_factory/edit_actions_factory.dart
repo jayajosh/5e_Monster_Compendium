@@ -150,7 +150,7 @@ class _AddActionsRow extends State<AddActionsRow> {
 
 }
 
-addActions() {
+addActions(){
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -165,8 +165,6 @@ addActions() {
         child: Center(child: Text('Legendary Actions', style: TextStyle(fontWeight: FontWeight.w900))),
       ),
       AddActionsRow(field: 'Legendary Action')
-      //todo add special abilities \/\/
-      //if(data.data().containsKey('special_abilities'))for(var i in addDetailsTraitsBlock(data)) i,
     ],
   );
 }

@@ -3,8 +3,6 @@ import 'package:monster_compendium/components/monster_edit_factory/edit_details_
 import 'package:monster_compendium/components/photo_border.dart';
 import '../../../components/monster_edit_factory/edit_actions_factory.dart';
 import '../../../components/monster_edit_factory/monster_fields_factory.dart';
-import '../../../components/monster_view_factory/actions_factory.dart';
-import '../../../components/monster_view_factory/details_factory.dart';
 import '../../../components/loading_shimmer.dart';
 import '../../../components/stat_icons.dart';
 
@@ -22,17 +20,11 @@ class _AddMonster extends State<AddMonster> {
 
   TextEditingController bottomController = new TextEditingController();
 
-  //TextEditingController nameController = new TextEditingController();
-  //TextEditingController sizeController = new TextEditingController();
-  //TextEditingController typeController = new TextEditingController();
-  //TextEditingController alignmentController = new TextEditingController();
-  TextEditingController crController = new TextEditingController();
-  TextEditingController descriptionController = new TextEditingController();
-  //TextEditingController acController = new TextEditingController();
-  //TextEditingController hpController = new TextEditingController();
-  //TextEditingController pbController = new TextEditingController();
+  TextEditingController crController = new TextEditingController(); //todo deprecate this
 
-  //List<String?> acStrings = [];
+  final details = addDetails();
+  final actions = addActions();
+  TextEditingController descriptionController = new TextEditingController();
 
   void _updateBottomText(String newText) {
     setState(() {
@@ -183,7 +175,26 @@ class _AddMonster extends State<AddMonster> {
                               child: ValueListenableBuilder<int>(
                                 valueListenable: indexNotifier,
                                 builder: (context, index, child) {
-                                  return getMonsterSection(index,descriptionController); // Call function instead of using a class
+                                  return IndexedStack(
+                                    index: index,
+                                    children: [
+                                      details, // index 0: Details
+                                      actions, // index 1: Actions
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextField(
+                                          maxLines: null,
+                                          controller: descriptionController,
+                                          decoration: const InputDecoration(
+                                            hintText: 'Trait Description',
+                                            labelText: 'Trait Description',
+                                            border: OutlineInputBorder(),
+                                            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ); // Call function instead of using a class
                                 },
                               ),
                             ),
@@ -233,7 +244,7 @@ modifier(int value){
   return modifier;
 }
 
-scoreBlock(context,String stat,data) {
+/*scoreBlock(context,String stat,data) {
   String statText = stat.substring(0,3).toUpperCase();
   return Flexible(
     child: Column(
@@ -258,7 +269,7 @@ scoreBlock(context,String stat,data) {
               ])),
         ]),
   );
-}
+}*/
 
 infoButton(context,IconData icon,String name,int i) { //todo rename
   var selectedColor = Theme.of(context).colorScheme.onSurface;
@@ -276,31 +287,10 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
   );
 }
 
-checkIfSectionEmpty(Column func){
+/*checkIfSectionEmpty(Column func){
   if(func.children.isEmpty){return noData;}
   return func;
-}
-
-Widget getMonsterSection(int index, descriptionController) {
-  if (index == 0) {
-    return addDetails(); //todo dont dispose on change, maybe create on init and call from there
-  } else if (index == 1) {
-    return addActions();
-  } else {
-    //if(data['monster_description'] == ''){return noData;}
-    return TextField(
-      maxLines: null,
-      controller: descriptionController,
-      decoration: const InputDecoration(
-        hintText: 'Trait Description',
-        labelText: 'Trait Description',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-      ),
-    );
-  }
-}
-
+}*/
 
 Widget loading(context){
   return Scaffold(
