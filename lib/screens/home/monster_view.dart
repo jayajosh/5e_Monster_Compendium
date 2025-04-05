@@ -282,7 +282,7 @@ scoreBlock(context,String stat,data) {
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
-                    child: Text(modifier(data.get('ability_scores')[stat]),style: TextStyle(fontWeight: FontWeight.w900),), //todo update text colour or fix frame
+                    child: Text(modifier(data.get('ability_scores')[stat]),style: TextStyle(fontWeight: FontWeight.w900),),
                   )
                 ])
               ])),

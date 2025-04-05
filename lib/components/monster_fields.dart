@@ -3,6 +3,126 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monster_compendium/components/stat_icons.dart';
 
+class GeneralDetailsButton extends StatefulWidget {
+
+  final TextEditingController bottomController;
+  final Function(String) onTextChanged;
+
+  const GeneralDetailsButton({super.key, required this.bottomController, required this.onTextChanged});
+
+  @override
+  _GeneralDetailsButton createState() => _GeneralDetailsButton();
+}
+
+class _GeneralDetailsButton extends State<GeneralDetailsButton> {
+
+  TextEditingController nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.bottomController.addListener(_onTextChanged);
+    nameController.text = 'Monster Name';
+  }
+
+  @override
+  void dispose() {
+    widget.bottomController.removeListener(_onTextChanged); // Remove listener
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    widget.onTextChanged(widget.bottomController.text); // Call callback
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return EditBorderButton(
+      height: 55,
+      onTap: () => _showDetailsDialog(context),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8,0,24,0),
+        child: Column(
+          children: [
+            Text(nameController.text),
+            RichText(text: TextSpan(text: widget.bottomController.text)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDetailsDialog(BuildContext context) async {
+    TextEditingController sizeController = TextEditingController();
+    TextEditingController typeController = TextEditingController();
+    TextEditingController alignmentController = TextEditingController();
+
+    //Initialize the controllers with the current values.
+    final details = widget.bottomController.text.split(', ');
+    if(details.length == 2){
+      final sizeType = details[0].split(' ');
+      if(sizeType.length == 2){
+        sizeController.text = sizeType[0];
+        typeController.text = sizeType[1];
+        alignmentController.text = details[1];
+      }
+    }
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog.adaptive(
+          title: Text('Edit Details'),
+          content: Material(
+            color: Colors.transparent,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: 'Name'),
+                  ),
+                  TextField(
+                    controller: sizeController,
+                    decoration: InputDecoration(labelText: 'Size'), //todo make dropdown
+                  ),
+                  TextField(
+                    controller: typeController,
+                    decoration: InputDecoration(labelText: 'Type'), //todo make dropdown??
+                  ),
+                  TextField(
+                    controller: alignmentController,
+                    decoration: InputDecoration(labelText: 'Alignment'), //todo make dropdown
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: <Widget>[ //todo give the other dialogs this
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('Save'),
+              onPressed: () {
+                final combinedDetails =
+                    '${sizeController.text} ${typeController.text}, ${alignmentController.text}';
+                Navigator.of(context).pop(combinedDetails);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null) {
+      widget.onTextChanged(result);
+    }
+  }
+}
+
 class EditBorderButton extends StatelessWidget {
   final double? width;
   final double? height;
@@ -526,100 +646,15 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
   }
 }
 
-/*
-class ScoreButton extends StatefulWidget{
+class ScoreEdit extends StatefulWidget{
   final String stat;
-  const ScoreButton({super.key, required this.stat});
+  const ScoreEdit({super.key, required this.stat});
 
   @override
-  _ScoreButton createState() => _ScoreButton();
+  _ScoreEdit createState() => _ScoreEdit();
 }
 
-class _ScoreButton extends State<ScoreButton> {
-  TextEditingController statController = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    String statText = widget.stat.substring(0,3).toUpperCase();
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-        child:  InkWell(
-          onTap: () {
-            print('Dialog Moment');
-          },
-          child: Stack(
-            children: [
-              Positioned(
-                right: -10,
-                top: 5,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(Icons.edit,
-                        shadows: <Shadow>[ // todo fix small border pixel
-                          Shadow(
-                            offset: Offset(7,0),
-                            color: Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                          Shadow(
-                            offset: Offset(7, -7),
-                            color: Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                          Shadow(
-                            offset: Offset(0, -7),
-                            color: Theme.of(context).colorScheme.surfaceContainerLow,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children:[
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                    Flexible(child:
-                    Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Icon(Stat.stat,size: 60),
-                          Column(children: [
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,8),
-                              child: Text(statController.text,style: TextStyle(fontWeight: FontWeight.w900)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
-                              child: Text(statController.text,style: TextStyle(color: Theme.of(context).colorScheme.onSecondary,fontWeight: FontWeight.w900),), //todo update text colour or fix frame
-                            )
-                          ])
-                        ])),
-                  ]),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-*/
-
-class ScoreButton extends StatefulWidget{
-  final String stat;
-  const ScoreButton({super.key, required this.stat});
-
-  @override
-  _ScoreButton createState() => _ScoreButton();
-}
-
-class _ScoreButton extends State<ScoreButton> {
+class _ScoreEdit extends State<ScoreEdit> {
   modifier(String value){ //todo check
     if (value.isNotEmpty) {
       int? intValue = int.tryParse(value);
@@ -627,7 +662,7 @@ class _ScoreButton extends State<ScoreButton> {
         String modifier;
         intValue <= 10
             ? modifier = ((intValue - 10.1) / 2).round().toString()
-            : modifier = '+' + ((intValue - 10) / 2).truncate().toString();
+            : modifier = '+${((intValue - 10) / 2).truncate()}';
         return modifier;
       }
       else {return 0;}
@@ -662,40 +697,35 @@ class _ScoreButton extends State<ScoreButton> {
   Widget build(BuildContext context) {
     String statText = widget.stat.substring(0,3).toUpperCase();
     return Flexible(
-      child: InkWell(
-        onTap: () {
-          print('Dialog Moment '+widget.stat);
-        },
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children:[
-              Flexible(child: Center(child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)))),
-              Flexible(child:
-              Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Icon(Stat.stat,size: 60),
-                    Column(children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
-                        child: SizedBox(height: 36,width:32,child: TextField(
-                          controller: statController,
-                          style: TextStyle(fontWeight: FontWeight.w900),
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number, // Set keyboard type
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly, // Allow only digits
-                          ],
-                        )),
-                      ),
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
-                        child: Text(modifier(statController.text).toString(),style: TextStyle(fontWeight: FontWeight.w900),),
-                      )
-                    ])
-                  ])),
-            ]),
-      ),
+      child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children:[
+            Flexible(child: Center(child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)))),
+            Flexible(child:
+            Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Icon(Stat.stat,size: 60),
+                  Column(children: [
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                      child: SizedBox(height: 36,width:32,child: TextField(
+                        controller: statController,
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number, // Set keyboard type
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                        ],
+                      )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                      child: Text(modifier(statController.text).toString(),style: TextStyle(fontWeight: FontWeight.w900),),
+                    )
+                  ])
+                ])),
+          ]),
     );
   }
 }

@@ -18,17 +18,24 @@ class AddMonster extends StatefulWidget {
 
 class _AddMonster extends State<AddMonster> {
 
+  TextEditingController bottomController = new TextEditingController();
 
-  TextEditingController nameController = new TextEditingController();
-  TextEditingController sizeController = new TextEditingController();
-  TextEditingController typeController = new TextEditingController();
-  TextEditingController alignmentController = new TextEditingController();
+  //TextEditingController nameController = new TextEditingController();
+  //TextEditingController sizeController = new TextEditingController();
+  //TextEditingController typeController = new TextEditingController();
+  //TextEditingController alignmentController = new TextEditingController();
   TextEditingController crController = new TextEditingController();
-  TextEditingController acController = new TextEditingController();
-  TextEditingController hpController = new TextEditingController();
-  TextEditingController pbController = new TextEditingController();
+  //TextEditingController acController = new TextEditingController();
+  //TextEditingController hpController = new TextEditingController();
+  //TextEditingController pbController = new TextEditingController();
 
-  List<String?> acStrings = [];
+  //List<String?> acStrings = [];
+
+  void _updateBottomText(String newText) {
+    setState(() {
+      bottomController.text = newText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,12 +131,12 @@ class _AddMonster extends State<AddMonster> {
               ),
               child: Row(
                 children: [
-                  ScoreButton(stat: 'strength'),
-                  ScoreButton(stat: 'dexterity'),
-                  ScoreButton(stat: 'constitution'),
-                  ScoreButton(stat: 'intelligence'),
-                  ScoreButton(stat: 'wisdom'),
-                  ScoreButton(stat: 'charisma'),
+                  ScoreEdit(stat: 'strength'),
+                  ScoreEdit(stat: 'dexterity'),
+                  ScoreEdit(stat: 'constitution'),
+                  ScoreEdit(stat: 'intelligence'),
+                  ScoreEdit(stat: 'wisdom'),
+                  ScoreEdit(stat: 'charisma'),
                 ],
               ),
             ),
@@ -184,16 +191,8 @@ class _AddMonster extends State<AddMonster> {
         ),
         appBar: AppBar(
           elevation: 0.0,
-          titleSpacing: 10.0,
-          title: MonsterTextField(controller: nameController),
-          /*bottom: PreferredSize(preferredSize: Size.zero,
-              child: Row(
-                children: [
-                  MonsterTextField(controller: sizeController),
-                  MonsterTextField(controller: typeController),
-                  MonsterTextField(controller: alignmentController)
-                ],
-              )),*/
+          title: GeneralDetailsButton(bottomController:bottomController,onTextChanged: _updateBottomText,),
+
           centerTitle: true,
           leading: InkWell(
             onTap: () {
