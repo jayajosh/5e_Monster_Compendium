@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monster_compendium/components/stat_icons.dart';
 
+import '../../services/monster_storage.dart';
+
 class GeneralDetailsButton extends StatefulWidget {
 
   final TextEditingController bottomController;
   final Function(String) onTextChanged;
+  final MonsterStore monster;
 
-  const GeneralDetailsButton({super.key, required this.bottomController, required this.onTextChanged});
+  const GeneralDetailsButton({super.key, required this.bottomController, required this.onTextChanged, required this.monster});
 
   @override
   _GeneralDetailsButton createState() => _GeneralDetailsButton();
@@ -22,7 +25,9 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
   void initState() {
     super.initState();
     widget.bottomController.addListener(_onTextChanged);
-    nameController.text = 'Monster Name';
+
+    if(widget.monster.name != null){nameController.text = widget.monster.name!;}
+    else{nameController.text = 'Monster Name';}
   }
 
   @override
@@ -57,10 +62,21 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
     TextEditingController typeController = TextEditingController();
     TextEditingController alignmentController = TextEditingController();
 
+    if(widget.monster.size != null){sizeController.text = widget.monster.size!;}
+    if(widget.monster.type != null){typeController.text = widget.monster.type!;}
+    if(widget.monster.alignment != null){alignmentController.text = widget.monster.alignment!;}
+
     final List<String> availableSizes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
     final List<String> availableTypes = ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Humanoid', 'Monstrosity', 'Ooze', 'Plant', 'Undead'];
     final List<String> availableAlignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good', 'Lawful Neutral', 'Neutral', 'Chaotic Neutral', 'Lawful Evil', 'Neutral Evil', 'Chaotic Evil', 'Unaligned'];
 
+
+    saveToMonster(){
+      widget.monster.name = nameController.text;
+      widget.monster.size = sizeController.text;
+      widget.monster.type = typeController.text;
+      widget.monster.alignment = alignmentController.text;
+    }
 
     final details = widget.bottomController.text.split(', ');
     if(details.length == 2){
@@ -84,15 +100,17 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
               child: Column(
                 //mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextField(
+                  TextFormField(
+                    onTap: (){nameController.text = '';},
                     controller: nameController,
                     decoration: InputDecoration(labelText: 'Name'),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: DropdownMenu(
-                      controller: sizeController,
-                      hintText: 'Size',
+                        menuHeight: 250,
+                        controller: sizeController,
+                        hintText: 'Size',
                         dropdownMenuEntries: availableSizes.map<DropdownMenuEntry<String>>((String value) {
                           return DropdownMenuEntry<String>(
                             value: value,
@@ -104,6 +122,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: DropdownMenu( //todo maybe allow custom type
+                        menuHeight: 250,
                         controller: typeController,
                         hintText: 'Type',
                         dropdownMenuEntries: availableTypes.map<DropdownMenuEntry<String>>((String value) {
@@ -117,6 +136,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: DropdownMenu(
+                        menuHeight: 250,
                         controller: alignmentController,
                         hintText: 'Alignment',
                         dropdownMenuEntries: availableAlignments.map<DropdownMenuEntry<String>>((String value) {
@@ -140,6 +160,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
                 onPressed: () {
                   final combinedDetails =
                       '${sizeController.text} ${typeController.text}, ${alignmentController.text}';
+                  saveToMonster();
                   Navigator.of(context).pop(combinedDetails);
                 },
               ),
@@ -155,6 +176,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
   }
 }
 
+//todo Pass background colour in as name has a noticeable buble around the icon \/\/
 class EditBorderButton extends StatelessWidget {
   final double? width;
   final double? height;
@@ -238,8 +260,9 @@ class MonsterTextField extends StatelessWidget {
 }
 
 class CrDropDown extends StatelessWidget { //todo make width dynamic
-  final TextEditingController controller;
-  const CrDropDown({super.key, required this.controller});
+  final MonsterStore monster;
+  final crController = new TextEditingController();
+  CrDropDown({super.key, required this.monster});
 
   List<DropdownMenuEntry<double?>> crList() {
     return [
@@ -256,13 +279,15 @@ class CrDropDown extends StatelessWidget { //todo make width dynamic
   @override
   Widget build(BuildContext context)
   {
+    if(monster.cr != null){crController.text = monster.cr.toString();}
     Size size = MediaQuery.of(context).size;
     return DropdownMenu(
+        controller: crController,
         label: const Text('CR'),
         dropdownMenuEntries: crList(),
         menuHeight: 250,
         width: 150,
-        onSelected: (cr){print(cr);},// todo fill out storage to be uploaded
+        onSelected: (cr){monster.cr = cr;},
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(),
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
@@ -271,7 +296,6 @@ class CrDropDown extends StatelessWidget { //todo make width dynamic
           ),
         )
     );
-    //todo add initialSelection: programmatically??
   }
 }
 
@@ -279,7 +303,9 @@ class MonsterIconButton extends StatefulWidget {
   final IconData icon;
   final String text1;
   final String text2;
-  const MonsterIconButton({super.key,required this.icon, required this.text1, required this.text2,});
+  final MonsterStore monster;
+  final bool ac;
+  const MonsterIconButton({super.key,required this.icon, required this.text1, required this.text2, required this.monster, required this.ac,});
 
   @override
   _MonsterIconButton createState() => _MonsterIconButton();
@@ -306,6 +332,9 @@ class _MonsterIconButton extends State<MonsterIconButton>{
 
           if (result != null) {
             setState(() {
+              if(widget.ac == true){widget.monster.ac = {text1Controller.text:text2Controller.text};}
+              else {widget.monster.hit_points = text1Controller.text; widget.monster.hit_dice = text2Controller.text;}
+
               text1Controller.text = result['text1'] == null ? ' ' : result['text1']!;
               text2Controller.text = result['text2'] == null ? ' ' : result['text2']!;
             });
@@ -335,6 +364,8 @@ class _MonsterIconButton extends State<MonsterIconButton>{
     //todo add initialSelection: programmatically??
   }
 }
+
+//todo center text \/\/\/
 
 class IconDialog extends StatefulWidget{
   final String text1;
@@ -424,7 +455,8 @@ class _IconDialogState extends State<IconDialog>{ //todo change aesthetics => ma
 }
 
 class MoveSpeedButton extends StatefulWidget{
-  const MoveSpeedButton({super.key});
+  final MonsterStore monster;
+  const MoveSpeedButton({super.key, required this.monster});
 
 
   @override
@@ -454,6 +486,7 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
         ).then((updatedSpeeds) {
           if (updatedSpeeds != null) {
             setState(() {
+              widget.monster.speed = speeds;
               speeds = updatedSpeeds;
             });
           }
@@ -679,8 +712,9 @@ class _MoveSpeedDialogState extends State<MoveSpeedDialog> {
 }
 
 class ScoreEdit extends StatefulWidget{ //todo limit to 2 characters
+  final MonsterStore monster;
   final String stat;
-  const ScoreEdit({super.key, required this.stat});
+  const ScoreEdit({super.key, required this.stat, required this.monster});
 
   @override
   _ScoreEdit createState() => _ScoreEdit();
@@ -707,6 +741,7 @@ class _ScoreEdit extends State<ScoreEdit> {
   @override
   void initState() {
     super.initState();
+    if(widget.monster.ability_scores[widget.stat] != null){statController.text = widget.monster.ability_scores[widget.stat].toString();}
     statController.addListener(_onTextChanged);
   }
 
@@ -720,7 +755,7 @@ class _ScoreEdit extends State<ScoreEdit> {
   void _onTextChanged() {
     // This function will be called whenever the text changes.
     setState(() {
-      //todo add to monster
+      widget.monster.ability_scores[widget.stat] = int.tryParse(statController.text);
     });
     // You can perform any actions based on the new text here.
   }

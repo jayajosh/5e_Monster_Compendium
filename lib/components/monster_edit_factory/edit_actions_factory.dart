@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../services/monster_storage.dart';
+
 class AddActionsRow extends StatefulWidget {
   final String field;
 
@@ -11,7 +13,6 @@ class AddActionsRow extends StatefulWidget {
   _AddActionsRow createState() => _AddActionsRow();
 
 }
-
 class _AddActionsRow extends State<AddActionsRow> {
 
   @override
@@ -27,10 +28,16 @@ class _AddActionsRow extends State<AddActionsRow> {
     );
   }
 
+  List<Map<String,String>> getData(){
+    List<Map<String,String>> data = [];
+    controllers.forEach((index,controller){
+      data.add({'name':controller!.text,'desc':descControllers[index]!.text});
+    });
+    return data;
+  }
+
   Map<int,TextEditingController?> controllers = {};
   Map<int,TextEditingController?> descControllers = {};
-
-
 
   Widget traitsRow(key,controller) {
     //final size = MediaQuery.of(context).size;
@@ -150,21 +157,37 @@ class _AddActionsRow extends State<AddActionsRow> {
 
 }
 
-addActions(){
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0),
-        child: Center(child: Text('Actions', style: TextStyle(fontWeight: FontWeight.w900))),
-      ),
-      AddActionsRow(field: 'Action'),
-      Divider(),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0),
-        child: Center(child: Text('Legendary Actions', style: TextStyle(fontWeight: FontWeight.w900))),
-      ),
-      AddActionsRow(field: 'Legendary Action')
-    ],
-  );
+class AddActions {
+
+  final MonsterStore monster;
+  AddActions({required this.monster});
+
+  final GlobalKey<_AddActionsRow> actionsKey = GlobalKey<_AddActionsRow>();
+  final GlobalKey<_AddActionsRow> legendaryActionsKey = GlobalKey<_AddActionsRow>();
+
+  updateStorage() {
+    monster.actions = actionsKey.currentState!.getData();
+    monster.legendary_actions = legendaryActionsKey.currentState!.getData();
+  }
+
+  Widget build() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Center(child: Text(
+              'Actions', style: TextStyle(fontWeight: FontWeight.w900))),
+        ),
+        AddActionsRow(field: 'Action',key: actionsKey),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Center(child: Text('Legendary Actions',
+              style: TextStyle(fontWeight: FontWeight.w900))),
+        ),
+        AddActionsRow(field: 'Legendary Action',key: legendaryActionsKey)
+      ],
+    );
+  }
 }

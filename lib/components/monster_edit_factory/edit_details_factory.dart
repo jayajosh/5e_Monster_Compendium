@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:monster_compendium/services/monster_storage.dart';
 
 class AddDetailsNumberRow extends StatefulWidget {
   final String field;
+  final MonsterStore monsterStore;
 
-  const AddDetailsNumberRow({super.key, required this.field});
+  const AddDetailsNumberRow({super.key, required this.field, required this.monsterStore});
 
   @override
   _AddDetailsNumberRow createState() => _AddDetailsNumberRow();
@@ -27,12 +29,19 @@ class _AddDetailsNumberRow extends State<AddDetailsNumberRow> {
     );
   }
 
+  Map<String,double> getData(){
+    Map<String,double> data = {};
+    controllers.forEach((index,controller){
+      data[controller!.text] = double.tryParse(numControllers[index]!.text)!;
+    });
+    return data;
+  }
+
   Map<int,TextEditingController?> controllers = {};
   Map<int,TextEditingController?> numControllers = {};
 
-  Widget detailNumberRow(key,controller) {
-    //final size = MediaQuery.of(context).size;
 
+  Widget detailNumberRow(key,controller) {
     return Container(
       height: 45,
       child: Center(
@@ -164,8 +173,9 @@ class _AddDetailsNumberRow extends State<AddDetailsNumberRow> {
 
 class AddDetailsTextRow extends StatefulWidget {
   final String field;
+  final MonsterStore monsterStore;
 
-  const AddDetailsTextRow({super.key, required this.field});
+  const AddDetailsTextRow({super.key, required this.field, required this.monsterStore});
 
   @override
   _AddDetailsTextRow createState() => _AddDetailsTextRow();
@@ -181,6 +191,14 @@ class _AddDetailsTextRow extends State<AddDetailsTextRow> {
       controller?.dispose();
     }
     );
+  }
+
+  List<String> getData(){
+    List<String> data = [];
+    controllers.forEach((index,controller){
+      data.add(controller!.text);
+    });
+    return data;
   }
 
   Map<int,TextEditingController?> controllers = {};
@@ -212,7 +230,7 @@ class _AddDetailsTextRow extends State<AddDetailsTextRow> {
                   setState(() {
                     controllers.remove(key);
                   })
-                ;},
+                  ;},
                 child: Icon(CupertinoIcons.delete,color: Colors.red,),
               ),
             ),
@@ -301,8 +319,9 @@ class _AddDetailsTextRow extends State<AddDetailsTextRow> {
 
 class AddDetailsSensesRow extends StatefulWidget {
   final String field;
+  final MonsterStore monsterStore;
 
-  const AddDetailsSensesRow({super.key, required this.field});
+  const AddDetailsSensesRow({super.key, required this.field, required this.monsterStore});
 
   @override
   _AddDetailsSensesRow createState() => _AddDetailsSensesRow();
@@ -322,6 +341,14 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
       controller?.dispose();
     }
     );
+  }
+
+  Map<String,String> getData(){
+    Map<String,String> data = {};
+    controllers.forEach((index,controller){
+      data[controller!.text] = numControllers[index]!.text;
+    });
+    return data;
   }
 
   Map<int,TextEditingController?> controllers = {};
@@ -460,7 +487,9 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
 }
 
 class AddDetailsTraitsRow extends StatefulWidget {
-  const AddDetailsTraitsRow({super.key});
+  final MonsterStore monster;
+
+  const AddDetailsTraitsRow({super.key, required this.monster});
 
   @override
   _AddDetailsTraitsRow createState() => _AddDetailsTraitsRow();
@@ -472,7 +501,7 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
   @override
   void dispose() {
     super.dispose();
-    controllers.forEach((index, controller){
+    traitControllers.forEach((index, controller){
       controller?.dispose();
     }
     );
@@ -482,7 +511,15 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
     );
   }
 
-  Map<int,TextEditingController?> controllers = {};
+  List<Map<String,String>> getData(){
+    List<Map<String,String>> data = [];
+    traitControllers.forEach((index,controller){
+      data.add({'name':controller!.text,'desc':descControllers[index]!.text});
+    });
+    return data;
+  }
+
+  Map<int,TextEditingController?> traitControllers = {};
   Map<int,TextEditingController?> descControllers = {};
 
   Widget traitsRow(key,controller) {
@@ -512,7 +549,7 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
                   child: InkWell(
                     onTap:() {
                       setState(() {
-                        controllers.remove(key);
+                        traitControllers.remove(key);
                         descControllers.remove(key);
                       })
                       ;},
@@ -544,7 +581,7 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
   makeTraitsRow() {
     List<Widget> traitsRows = [];
 
-    controllers.forEach((rowIndex, controller) {
+    traitControllers.forEach((rowIndex, controller) {
       traitsRows.add(traitsRow(rowIndex,controller));
       traitsRows.add(Container(height: 8));
     });
@@ -555,8 +592,8 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
         child: InkWell(
           onTap: () {
             setState(() {
-              int newRowIndex = controllers.keys.length;
-              controllers[newRowIndex] =
+              int newRowIndex = traitControllers.keys.length;
+              traitControllers[newRowIndex] =
               new TextEditingController();
               descControllers[newRowIndex] =
               new TextEditingController();
@@ -604,29 +641,80 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
 
 }
 
-addDetails() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      AddDetailsNumberRow(field: 'saving_throws'),
-      Divider(thickness: 0.25,),
-      AddDetailsNumberRow(field:'skills'),
-      Divider(thickness: 0.25,),
-      AddDetailsTextRow(field: 'damage_resistances'),
-      Divider(thickness: 0.25,),
-      AddDetailsTextRow(field: 'damage_immunities'),
-      Divider(thickness: 0.25,),
-      AddDetailsTextRow(field: 'damage_vulnerabilities'),
-      Divider(thickness: 0.25,),
-      AddDetailsSensesRow(field:'senses'),
-      Divider(thickness: 0.25,),
-      AddDetailsTextRow(field: 'languages'),
-      Divider(),
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0),
-        child: Center(child: Text('Traits', style: TextStyle(fontWeight: FontWeight.w900))),
-      ),
-      AddDetailsTraitsRow()
-    ],
-  );
+class AddDetails {
+
+  final MonsterStore monster;
+  AddDetails({required this.monster});
+
+  //late AddDetailsNumberRow Saving;// = AddDetailsNumberRow(field: 'saving_throws', monsterStore: monster);
+  final GlobalKey<_AddDetailsNumberRow> savingKey = GlobalKey<_AddDetailsNumberRow>();
+  final GlobalKey<_AddDetailsNumberRow> skillsKey = GlobalKey<_AddDetailsNumberRow>();
+  final GlobalKey<_AddDetailsTextRow> conditionKey = GlobalKey<_AddDetailsTextRow>();
+  final GlobalKey<_AddDetailsTextRow> resistancesKey = GlobalKey<_AddDetailsTextRow>();
+  final GlobalKey<_AddDetailsTextRow> immunitiesKey = GlobalKey<_AddDetailsTextRow>();
+  final GlobalKey<_AddDetailsTextRow> vulnerabilitiesKey = GlobalKey<_AddDetailsTextRow>();
+  final GlobalKey<_AddDetailsSensesRow> sensesKey = GlobalKey<_AddDetailsSensesRow>();
+  final GlobalKey<_AddDetailsTextRow> languagesKey = GlobalKey<_AddDetailsTextRow>();
+  final GlobalKey<_AddDetailsTraitsRow> traitsKey = GlobalKey<_AddDetailsTraitsRow>();
+
+  updateStorage(){
+    final savingData = savingKey.currentState!.getData();
+    monster.saving_throws = savingData;
+
+    final skillsData = skillsKey.currentState!.getData();
+    monster.skills = skillsData;
+
+    final conditionData = conditionKey.currentState!.getData();
+    monster.condition_immunities = conditionData;
+
+    final resistancesData = resistancesKey.currentState!.getData();
+    monster.damage_resistances = resistancesData;
+
+    final immunitiesData = immunitiesKey.currentState!.getData();
+    monster.damage_immunities = immunitiesData;
+
+    final vulnerabilitiesData = vulnerabilitiesKey.currentState!.getData();
+    monster.damage_vulnerabilities = vulnerabilitiesData;
+
+    final sensesData = sensesKey.currentState!.getData();
+    monster.senses = sensesData;
+
+    final languagesData = languagesKey.currentState!.getData();
+    monster.languages = languagesData;
+
+    final traitsData = traitsKey.currentState!.getData();
+    monster.special_abilities = traitsData;
+
+  }
+
+  Widget build() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AddDetailsNumberRow(field: 'saving_throws', monsterStore: monster, key: savingKey),
+        Divider(thickness: 0.25,),
+        AddDetailsNumberRow(field: 'skills', monsterStore: monster, key: skillsKey),
+        Divider(thickness: 0.25,),
+        AddDetailsTextRow(field: 'condition_immunities', monsterStore: monster, key: conditionKey),
+        Divider(thickness: 0.25,),
+        AddDetailsTextRow(field: 'damage_resistances', monsterStore: monster, key: resistancesKey),
+        Divider(thickness: 0.25,),
+        AddDetailsTextRow(field: 'damage_immunities', monsterStore: monster, key: immunitiesKey),
+        Divider(thickness: 0.25,),
+        AddDetailsTextRow(
+            field: 'damage_vulnerabilities', monsterStore: monster, key: vulnerabilitiesKey),
+        Divider(thickness: 0.25,),
+        AddDetailsSensesRow(field: 'senses', monsterStore: monster, key: sensesKey),
+        Divider(thickness: 0.25,),
+        AddDetailsTextRow(field: 'languages', monsterStore: monster, key: languagesKey),
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Center(child: Text(
+              'Traits', style: TextStyle(fontWeight: FontWeight.w900))),
+        ),
+        AddDetailsTraitsRow(monster: monster, key: traitsKey)
+      ],
+    );
+  }
 }
