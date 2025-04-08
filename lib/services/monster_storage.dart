@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:monster_compendium/services/photo_service.dart';
 
 class MonsterStore {
   String? name;
@@ -39,6 +43,7 @@ class MonsterStore {
   String? monster_description;
 
   String? image_url;
+  File? image;
 
   String creator_id = '';
   DateTime created_at = DateTime.now();
@@ -191,10 +196,15 @@ class MonsterStore {
     };
   }
 
-  upload(){
+  upload(context) async {
     final db = FirebaseFirestore.instance;
-    db.collection('Monsters').doc().set(toMap())
-        .onError((e, _) => print("Error writing document: $e")); //todo snackbar notify
+    String id = db.collection('Monsters').doc().id;
+    image_url = await storeChild(id,image,context); //todo decide whether to wait or not
+    db.collection('Monsters').doc(id).set(toMap())
+        .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Error writing document: $e"),
+      duration: const Duration(seconds: 5),
+    )));
 
   }
 

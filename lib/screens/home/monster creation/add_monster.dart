@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/monster_edit_factory/edit_details_factory.dart';
 import 'package:monster_compendium/components/photo_border.dart';
+import '../../../services/photo_service.dart';
 import '../../../components/monster_edit_factory/edit_actions_factory.dart';
 import '../../../components/monster_edit_factory/monster_fields_factory.dart';
 import '../../../components/loading_shimmer.dart';
@@ -52,10 +53,13 @@ class _AddMonster extends State<AddMonster> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: photoBorder(const Image(
-                            image: NetworkImage( //todo add more accurate local placeholder and upload image button
-                                'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                          ),
+                          child: InkWell(
+                            onTap: () async {monsterStorage.image = await pickImage(context);},
+                            child: photoBorder(const Image(
+                              image: NetworkImage( //todo add more accurate local placeholder and upload image icon
+                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                            ),
+                            ),
                           ),
                         ),
                         Expanded(
@@ -229,11 +233,11 @@ class _AddMonster extends State<AddMonster> {
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
               child: InkWell(
-                onTap: (){
+                onTap: () async {
                   details.updateStorage();
                   actions.updateStorage();
                   monsterStorage.monster_description = descriptionController.text;
-                  monsterStorage.upload(); //todo make function with null checks where needed
+                  monsterStorage.upload(context); //todo make function with null checks where needed
                   },
                 child:
                   Icon(
