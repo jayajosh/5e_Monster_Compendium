@@ -13,8 +13,8 @@ class MonsterStore {
 
   double? cr;
   Map<String, dynamic> ac = {'type': null, 'value': null};
-  String? hit_points;
-  String? hit_dice;
+  double? hit_points;
+  String? hit_dice = '';
   Map<String?, String?> speed = {};
 
   Map<String, int?> ability_scores = {
@@ -40,9 +40,9 @@ class MonsterStore {
   List<Map<String?, String?>> actions = [];
   List<Map<String?, String?>> legendary_actions = [];
 
-  String? monster_description;
+  String? monster_description = null;
 
-  String? image_url;
+  String? image_url = '';
   File? image;
 
   String creator_id = '';
@@ -171,8 +171,8 @@ class MonsterStore {
       'type': type,
       'alignment': alignment,
       'cr': cr,
-      'xp': calcXP(cr),
-      'proficiency_bonus': proficiencyBonus(this.cr!),
+      'xp': cr!=null ? calcXP(cr): null,
+      'proficiency_bonus': cr!=null ? proficiencyBonus(this.cr!): null,
       'ac': ac,
       'hit_points': hit_points,
       'hit_dice': hit_dice,
@@ -196,11 +196,11 @@ class MonsterStore {
     };
   }
 
-  upload(context) async {
+  upload(context,monsterMap) async {
     final db = FirebaseFirestore.instance;
     String id = db.collection('Monsters').doc().id;
     image_url = await storeChild(id,image,context); //todo decide whether to wait or not
-    db.collection('Monsters').doc(id).set(toMap())
+    db.collection('Monsters').doc(id).set(monsterMap)
         .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Error writing document: $e"),
       duration: const Duration(seconds: 5),
@@ -211,6 +211,31 @@ class MonsterStore {
     int proficiencyBonus(double cr) {
       if (cr == 0) return 2;
       return ((cr - 1) / 4).floor() + 2;
+    }
+
+    validate(context){
+      var monsterMap = toMap();
+      final validation = ['name','size','type','alignment','ac','hit_points','cr'];
+      String missing = '';
+      for (var field in validation) {
+        if(field == 'ac' && monsterMap['ac']['value'] == null){
+          missing += '$field, ';
+        }
+        if(monsterMap[field] == null){
+          missing += '$field, ';
+      }
+      }
+      //Map<String,dynamic> scores = monsterMap['ability_scores'];
+      for(var stat in monsterMap['ability_scores'].keys)
+      {
+        if(monsterMap['ability_scores'][stat] == null){missing += '${stat.substring(0,3)}, ';}
+      }
+      if(missing == ''){
+        upload(context,monsterMap);
+      }
+      else{
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Missing fields: ${missing.substring(0,missing.length-2)}")));}
     }
 }
 

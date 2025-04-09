@@ -257,10 +257,22 @@ class _MonsterView extends State<MonsterView> {
   }
 }
 
-modifier(int value){ //todo check
-  String modifier;
-  value <= 10 ? modifier = ((value-10)/2).truncate().toString():modifier = '+'+((value-10)/2).truncate().toString();
-  return modifier;
+statCheck(int? value){
+  if(value == null){return '';}
+  else {
+    return value.toString();
+  }
+}
+
+modifier(int? value){
+  if(value == null){return '';}
+  else {
+    String modifier;
+    value <= 10
+        ? modifier = ((value - 10) / 2).truncate().toString()
+        : modifier = '+${((value - 10) / 2).truncate()}';
+    return modifier;
+  }
 }
 
 scoreBlock(context,String stat,data) {
@@ -278,7 +290,7 @@ scoreBlock(context,String stat,data) {
                 Column(children: [
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,8),
-                    child: Text(data.get('ability_scores')[stat].toString(),style: TextStyle(fontWeight: FontWeight.w900)),
+                    child: Text(statCheck(data.get('ability_scores')[stat]),style: TextStyle(fontWeight: FontWeight.w900)),
                   ),
                   Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),

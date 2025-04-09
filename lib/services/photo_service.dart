@@ -9,14 +9,19 @@ final storageRef = storage.ref();
 late Reference storageChild;
 
 storeChild(id,image,context) async {
-  storageChild = storageRef.child('/Monsters/Images/$id.png');
-  try{await storageChild.putFile(image);}
-  catch (e) {ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Error uploading image: $e'),
-      duration: const Duration(seconds: 5),
-    ),
-  );}
+  if(image!=null) {
+    storageChild = storageRef.child('/Monsters/Images/$id.png');
+    try {
+      await storageChild.putFile(image);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error uploading image: $e'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
+  }
   return storageChild.fullPath;
 }
 

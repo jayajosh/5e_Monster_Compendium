@@ -88,17 +88,29 @@ detailsTraitsBlock(data){
 }
 
 otherDetailsCheck(data,returnWidget){
-  if(data['saving_throws'].isEmpty && data['skills'].isEmpty && data['damage_resistances'].isEmpty && data['damage_immunities'].isEmpty && data['damage_vulnerabilities'].isEmpty && data['senses'].isEmpty && data['languages'].isEmpty){
+  if(data['saving_throws'].isNotEmpty && data['skills'].isNotEmpty && data['damage_resistances'].isNotEmpty && data['damage_immunities'].isNotEmpty && data['damage_vulnerabilities'].isNotEmpty && data['senses'].isNotEmpty && data['languages'].isNotEmpty){
     return SizedBox.shrink();
   }
   return returnWidget;
+}
+
+detailsCheck(data){
+  if(data['saving_throws'].isEmpty && data['skills'].isEmpty && data['damage_resistances'].isEmpty && data['damage_immunities'].isEmpty && data['damage_vulnerabilities'].isEmpty && data['senses'].isEmpty && data['languages'].isEmpty){
+    if(data.data().containsKey('special_abilities')) {
+      if (data['special_abilities'].isEmpty){
+        return Center(child: Text("Data does not exist"));
+      }
+    }
+  }
+  return SizedBox.shrink();
 }
 
 details(data) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      otherDetailsCheck(data,Center(child: Text('Other Details', style: TextStyle(fontWeight: FontWeight.w900)))),
+      detailsCheck(data),
+      if(data['saving_throws'].isNotEmpty && data['skills'].isNotEmpty && data['damage_resistances'].isNotEmpty && data['damage_immunities'].isNotEmpty && data['damage_vulnerabilities'].isNotEmpty && data['senses'].isNotEmpty && data['languages'].isNotEmpty)Center(child: Text('Other Details', style: TextStyle(fontWeight: FontWeight.w900))),
       detailsNumberRow(data,'saving_throws'),
       detailsNumberRow(data,'skills'),
       detailsTextRow(data,'damage_resistances'),

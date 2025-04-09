@@ -332,8 +332,8 @@ class _MonsterIconButton extends State<MonsterIconButton>{
 
           if (result != null) {
             setState(() {
-              if(widget.ac == true){widget.monster.ac = {text1Controller.text:text2Controller.text};}
-              else {widget.monster.hit_points = text1Controller.text; widget.monster.hit_dice = text2Controller.text;}
+              if(widget.ac == true){widget.monster.ac = {'type':text2Controller.text,'value':double.tryParse(text1Controller.text)};}
+              else {widget.monster.hit_points = double.tryParse(text1Controller.text); widget.monster.hit_dice = text2Controller.text;}
 
               text1Controller.text = result['text1'] == null ? ' ' : result['text1']!;
               text2Controller.text = result['text2'] == null ? ' ' : result['text2']!;
