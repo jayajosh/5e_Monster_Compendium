@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
+import 'package:monster_compendium/screens/home/monster%20creation/edit_monster.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Welcome/sign_up_page.dart';
 import 'locator.dart';
@@ -79,6 +80,8 @@ class _Main extends State<Main> with WidgetsBindingObserver{
             '/SignUpPage': (context) => SignUpPage(),
             '/Home/MonsterView': (context) => MonsterView(),
             '/Home/AddMonster': (context) => AddMonster(),
+            '/Home/EditMonster': (context) => EditMonster(),
+            '/Home/MonsterView/EditMonster': (context) => EditMonster(),
           },
         )
 
