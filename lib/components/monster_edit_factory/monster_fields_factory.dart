@@ -476,6 +476,17 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
   Map<String, String> speeds = {};
 
   @override
+  void initState() {
+    super.initState();
+    widget.monster.speed.forEach((String? speedName, String? speedValue){
+      if(speedName != null && speedValue != null) {
+        speeds[speedName] = speedValue;
+        print(speeds);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return EditBorderButton(
       width: 150,
@@ -520,7 +531,6 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
 class MoveSpeedDialog extends StatefulWidget { //todo move to save even without ok being clicked
   final Function(Map<String, String>) onSpeedsChanged;
   final Map<String, String>? speeds;
-
   const MoveSpeedDialog({super.key, required this.onSpeedsChanged, this.speeds});
 
   @override
