@@ -43,17 +43,21 @@ class _EditMonster extends State<EditMonster> {
         .of(context)!
         .settings
         .arguments as List?;
-    print(args);
     return args;
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     try {monsterStorage = getArgs()?[0];}catch(e) {
-      print(e); //todo dont build until this check
-      monsterStorage = MonsterStore(); //todo change build to a
+      print(e); //todo snackbar it
+      monsterStorage = MonsterStore();
     }
+  }
+
+  descChange(){
+    monsterStorage.monster_description = descriptionController.text;
+    print(monsterStorage.monster_description);
   }
 
   @override
@@ -63,6 +67,10 @@ class _EditMonster extends State<EditMonster> {
 
     try {monsterStorage = getArgs()?[0];}catch(e) {
       print(e);
+    }
+
+    if(monsterStorage.monster_description != null){
+      setState((){descriptionController.text = monsterStorage.monster_description!;});
     }
 
     return Scaffold(
@@ -218,7 +226,8 @@ class _EditMonster extends State<EditMonster> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextField(
                                           maxLines: null,
-                                          controller: descriptionController,
+                                          onChanged: (String newText) {monsterStorage.monster_description = newText;},
+                                          controller: descriptionController, //todo set this aswell
                                           decoration: const InputDecoration(
                                             hintText: 'Monster Description',
                                             labelText: 'Monster Description',
