@@ -254,7 +254,7 @@ class _MonsterView extends State<MonsterView> {
                     actions: [
                       Padding(
                           padding: const EdgeInsets.only(right: 10.0),
-                          child:editButton(statblock,context))
+                          child:editButton(statblock,getArgs()?[0],context))
                     ]
                 )
             );
@@ -421,12 +421,12 @@ Widget loading(context){
   );
 }
 
-editButton(statblock,context){
+editButton(statblock,uid,context){
   if(statblock.get('creator_id') == FirebaseAuth.instance.currentUser?.uid) {
     MonsterStore ms = MonsterStore.fromMap(statblock.data());
     return InkWell(
       onTap: () {
-      Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [ms]);
+      Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [ms,uid]);
     },
       child: Icon(
         Icons.edit,

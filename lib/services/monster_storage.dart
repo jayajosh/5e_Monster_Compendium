@@ -45,8 +45,8 @@ class MonsterStore {
   String? image_url = '';
   File? image;
 
-  String creator_id = '';
-  DateTime created_at = DateTime.now();
+  String? creator_id;
+  DateTime? created_at;
 
   MonsterStore({
     this.name,
@@ -191,8 +191,8 @@ class MonsterStore {
       'legendary_actions': legendary_actions,
       'monster_description': monster_description,
       'image_url': image_url,
-      'creator_id': FirebaseAuth.instance.currentUser?.uid,
-      'created_at': DateTime.now(),
+      'creator_id': creator_id ?? FirebaseAuth.instance.currentUser?.uid,
+      'created_at': created_at ?? DateTime.now(),
     };
   }
 
@@ -208,13 +208,27 @@ class MonsterStore {
 
   }
 
+  update(context,Map monsterMap, id) async {
+    final db = FirebaseFirestore.instance;
+    image_url = await storeChild(id,image,context); //todo decide whether to wait or not
+    monsterMap.remove(created_at);
+    monsterMap.remove(creator_id);
+    var uploadMonsterMap = monsterMap.cast<Object,Object>();
+    db.collection('Monsters').doc(id).update(uploadMonsterMap)
+        .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Error writing document: $e"),
+      duration: const Duration(seconds: 5),
+    )));
+
+  }
+
     int proficiencyBonus(double cr) {
       if (cr == 0) return 2;
       return ((cr - 1) / 4).floor() + 2;
     }
 
-    validate(context){
-      var monsterMap = toMap();
+    validate(context,bool newMonster, id){
+      Map monsterMap = toMap();
       final validation = ['name','size','type','alignment','ac','hit_points','cr'];
       String missing = '';
       for (var field in validation) {
@@ -230,8 +244,11 @@ class MonsterStore {
       {
         if(monsterMap['ability_scores'][stat] == null){missing += '${stat.substring(0,3)}, ';}
       }
-      if(missing == ''){
-        upload(context,monsterMap);
+      if(missing == '') {
+        if (newMonster == false) {
+          update(context, monsterMap, id);
+        }
+        else {upload(context, monsterMap);}
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
