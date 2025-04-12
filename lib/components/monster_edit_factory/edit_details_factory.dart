@@ -41,6 +41,20 @@ class _AddDetailsNumberRow extends State<AddDetailsNumberRow> {
   Map<int,TextEditingController?> numControllers = {};
 
 
+  setControllers(){ //todo fix running when dialog closes
+    int index = 0;
+    final _field = widget.monsterStore.toMap()[widget.field];
+      if(_field.isNotEmpty) {
+        _field.keys.forEach((row){
+          controllers[index] = new TextEditingController();
+          controllers[index]?.text = row;
+          numControllers[index] = new TextEditingController();
+          numControllers[index]?.text = _field[row].toString();
+          index += 1;
+        });
+      }
+    }
+
   Widget detailNumberRow(key,controller) {
     return Container(
       height: 45,
@@ -149,6 +163,7 @@ class _AddDetailsNumberRow extends State<AddDetailsNumberRow> {
 
   @override
   Widget build(BuildContext context) {
+    setControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -293,8 +308,21 @@ class _AddDetailsTextRow extends State<AddDetailsTextRow> {
     return name.trim();
   }
 
+  setControllers(){ //todo fix running when dialog closes
+    int index = 0;
+    final _field = widget.monsterStore.toMap()[widget.field];
+    if(_field.isNotEmpty) {
+      _field.forEach((row){
+        controllers[index] = new TextEditingController();
+        controllers[index]?.text = row;
+        index += 1;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    setControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -462,8 +490,23 @@ class _AddDetailsSensesRow extends State<AddDetailsSensesRow> {
     return name.trim();
   }
 
+  setControllers(){ //todo fix running when dialog closes
+    int index = 0;
+    final _field = widget.monsterStore.toMap()[widget.field];
+    if(_field.isNotEmpty) {
+      _field.keys.forEach((row){
+        controllers[index] = new TextEditingController();
+        controllers[index]?.text = row;
+        numControllers[index] = new TextEditingController();
+        numControllers[index]?.text = _field[row].replaceAll(' ft.', '');
+        index += 1;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    setControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -524,7 +567,6 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
 
   Widget traitsRow(key,controller) {
     //final size = MediaQuery.of(context).size;
-
     return Container(
       //height: 45,
       child: Center(
@@ -622,8 +664,23 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
     return traitsRows;
   }
 
+  setControllers() {//todo fix running when dialog closes
+    int index = 0;
+    final _field = widget.monster.toMap()['special_abilities'];
+    if (_field.isNotEmpty) {
+      _field.forEach((row) {
+          traitControllers[index] = new TextEditingController();
+          traitControllers[index]?.text = row['name'];
+          descControllers[index] = new TextEditingController();
+          descControllers[index]?.text = row['desc'];
+          index += 1;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    setControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(

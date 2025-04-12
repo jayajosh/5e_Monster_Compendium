@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
 import '../../../components/monster_edit_factory/edit_actions_factory.dart';
@@ -28,8 +27,6 @@ class _EditMonster extends State<EditMonster> {
 
   late MonsterStore monsterStorage;
 
-  bool _isInitialized = false;
-
   TextEditingController descriptionController = new TextEditingController();
 
   void _updateBottomText(String newText) {
@@ -47,31 +44,30 @@ class _EditMonster extends State<EditMonster> {
   }
 
   @override
-  void initState() {
+  void initState() { //todo possibly delete
     super.initState();
     try {monsterStorage = getArgs()?[0];}catch(e) {
       print(e); //todo snackbar it
       monsterStorage = MonsterStore();
-    }
+       }
   }
 
-  descChange(){
-    monsterStorage.monster_description = descriptionController.text;
-    print(monsterStorage.monster_description);
-  }
 
   @override
   Widget build(BuildContext context) {
-    final details = AddDetails(monster: monsterStorage);
-    final actions = AddActions(monster: monsterStorage);
-
-    try {monsterStorage = getArgs()?[0];}catch(e) {
-      print(e);
+    try {
+      monsterStorage = getArgs()?[0];
+      _updateBottomText('${monsterStorage.size} ${monsterStorage.type}, ${monsterStorage.alignment}');
+    }catch(e) {
+      print(e); //todo snackbar it
     }
 
     if(monsterStorage.monster_description != null){
       setState((){descriptionController.text = monsterStorage.monster_description!;});
     }
+
+    final details = AddDetails(monster: monsterStorage);
+    final actions = AddActions(monster: monsterStorage);
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -214,6 +210,7 @@ class _EditMonster extends State<EditMonster> {
                           Divider(),
                           Expanded( // Add this to allow scrolling inside
                             child: SingleChildScrollView( //todo needs a height can be flexible through a column
+                              //todo make for each tab individually & apply to add factory
                               child: ValueListenableBuilder<int>(
                                 valueListenable: indexNotifier,
                                 builder: (context, index, child) {
@@ -272,7 +269,7 @@ class _EditMonster extends State<EditMonster> {
                     details.updateStorage();
                     actions.updateStorage();
                     monsterStorage.monster_description = descriptionController.text;
-                    monsterStorage.validate(context);
+                    monsterStorage.validate(context,false,getArgs()[1]);
                   },
                   child:
                   Icon(

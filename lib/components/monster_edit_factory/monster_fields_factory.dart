@@ -56,7 +56,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
         child: Column(
           children: [
             Text(nameController.text),
-            RichText(text: TextSpan(text: widget.bottomController.text)),
+            RichText(text: TextSpan(text: widget.bottomController.text, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),),
           ],
         ),
       ),
@@ -478,12 +478,13 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
   @override
   void initState() {
     super.initState();
-    widget.monster.speed.forEach((String? speedName, String? speedValue){
-      if(speedName != null && speedValue != null) {
-        speeds[speedName] = speedValue;
-        print(speeds);
-      }
-    });
+    if(widget.monster.speed.isNotEmpty) {
+      widget.monster.speed.forEach((String? speedName, String? speedValue) {
+        if (speedName != null && speedValue != null) {
+          speeds[speedName] = speedValue;
+        }
+      });
+    }
   }
 
   @override

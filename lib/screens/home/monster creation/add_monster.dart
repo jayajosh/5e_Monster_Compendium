@@ -237,7 +237,7 @@ class _AddMonster extends State<AddMonster> {
                   details.updateStorage();
                   actions.updateStorage();
                   monsterStorage.monster_description = descriptionController.text;
-                  monsterStorage.validate(context);
+                  monsterStorage.validate(context,true,null);
                   },
                 child:
                   Icon(
