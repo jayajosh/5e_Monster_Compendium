@@ -20,6 +20,9 @@ class GeneralDetailsButton extends StatefulWidget {
 class _GeneralDetailsButton extends State<GeneralDetailsButton> {
 
   TextEditingController nameController = TextEditingController();
+  TextEditingController sizeController = TextEditingController();
+  TextEditingController typeController = TextEditingController();
+  TextEditingController alignmentController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +30,9 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
     widget.bottomController.addListener(_onTextChanged);
 
     if(widget.monster.name != null){nameController.text = widget.monster.name!;}
+    if(widget.monster.size != null){sizeController.text = widget.monster.size!;}
+    if(widget.monster.type != null){typeController.text = widget.monster.type!;}
+    if(widget.monster.alignment != null){alignmentController.text = widget.monster.alignment!;}
     else{nameController.text = 'Monster Name';}
   }
 
@@ -50,7 +56,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
         child: Column(
           children: [
             Text(nameController.text),
-            RichText(text: TextSpan(text: widget.bottomController.text)),
+            RichText(text: TextSpan(text: widget.bottomController.text, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),),
           ],
         ),
       ),
@@ -58,14 +64,6 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
   }
 
   Future<void> _showDetailsDialog(BuildContext context) async {
-    TextEditingController sizeController = TextEditingController();
-    TextEditingController typeController = TextEditingController();
-    TextEditingController alignmentController = TextEditingController();
-
-    if(widget.monster.size != null){sizeController.text = widget.monster.size!;}
-    if(widget.monster.type != null){typeController.text = widget.monster.type!;}
-    if(widget.monster.alignment != null){alignmentController.text = widget.monster.alignment!;}
-
     final List<String> availableSizes = ['Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan'];
     final List<String> availableTypes = ['Aberration', 'Beast', 'Celestial', 'Construct', 'Dragon', 'Elemental', 'Fey', 'Fiend', 'Giant', 'Humanoid', 'Monstrosity', 'Ooze', 'Plant', 'Undead'];
     final List<String> availableAlignments = ['Lawful Good', 'Neutral Good', 'Chaotic Good', 'Lawful Neutral', 'Neutral', 'Chaotic Neutral', 'Lawful Evil', 'Neutral Evil', 'Chaotic Evil', 'Unaligned'];
@@ -234,7 +232,7 @@ class EditBorderButton extends StatelessWidget {
   }
 }
 
-class MonsterTextField extends StatelessWidget {
+/*class MonsterTextField extends StatelessWidget { //todo delete
   final TextEditingController controller;
 
   const MonsterTextField({super.key, required this.controller});
@@ -257,7 +255,7 @@ class MonsterTextField extends StatelessWidget {
       child: TextField(controller: controller),
     );
   }
-}
+}*/
 
 class CrDropDown extends StatelessWidget { //todo make width dynamic
   final MonsterStore monster;
@@ -277,11 +275,12 @@ class CrDropDown extends StatelessWidget { //todo make width dynamic
   }
 
   @override
-  Widget build(BuildContext context)
+  Widget build(BuildContext context) //todo limit to only show label and not value
   {
-    if(monster.cr != null){crController.text = monster.cr.toString();}
+    if(monster.cr != null){crController.text = monster.cr.toString();} //todo fix decimal
     Size size = MediaQuery.of(context).size;
     return DropdownMenu(
+        initialSelection: monster.cr,
         controller: crController,
         label: const Text('CR'),
         dropdownMenuEntries: crList(),
@@ -319,6 +318,15 @@ class _MonsterIconButton extends State<MonsterIconButton>{
   @override
   Widget build(BuildContext context)
   {
+    if(widget.ac == true){
+      if(widget.monster.ac['value'] != null){text1Controller.text = widget.monster.ac['value'].toString();}
+      if(widget.monster.ac['type'] != null){text2Controller.text = widget.monster.ac['type'];}
+    }
+    else{
+      if(widget.monster.hit_points != null){text1Controller.text = widget.monster.hit_points.toString();}
+      if(widget.monster.hit_dice != null){text2Controller.text = widget.monster.hit_dice!;}
+
+    }
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -468,6 +476,18 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
   Map<String, String> speeds = {};
 
   @override
+  void initState() {
+    super.initState();
+    if(widget.monster.speed.isNotEmpty) {
+      widget.monster.speed.forEach((String? speedName, String? speedValue) {
+        if (speedName != null && speedValue != null) {
+          speeds[speedName] = speedValue;
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return EditBorderButton(
       width: 150,
@@ -512,7 +532,6 @@ class _MoveSpeedButtonState extends State<MoveSpeedButton> {
 class MoveSpeedDialog extends StatefulWidget { //todo move to save even without ok being clicked
   final Function(Map<String, String>) onSpeedsChanged;
   final Map<String, String>? speeds;
-
   const MoveSpeedDialog({super.key, required this.onSpeedsChanged, this.speeds});
 
   @override

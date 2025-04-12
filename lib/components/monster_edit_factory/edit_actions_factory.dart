@@ -6,8 +6,9 @@ import '../../services/monster_storage.dart';
 
 class AddActionsRow extends StatefulWidget {
   final String field;
+  final MonsterStore monster;
 
-  const AddActionsRow({super.key, required this.field});
+  const AddActionsRow({super.key, required this.field, required this.monster});
 
   @override
   _AddActionsRow createState() => _AddActionsRow();
@@ -94,9 +95,35 @@ class _AddActionsRow extends State<AddActionsRow> {
     );
   }
 
+  setControllers(){ //todo fix running when dialog closes
+    int index = 0;
+  if(widget.field == 'legendary_actions'){
+    if(widget.monster.legendary_actions.isNotEmpty) {
+      widget.monster.legendary_actions.forEach((Map action){
+        controllers[index] = new TextEditingController();
+        controllers[index]?.text = action['name'];
+        descControllers[index] = new TextEditingController();
+        descControllers[index]?.text = action['name'];
+        index += 1;
+      });
+    }
+  }
+  else{
+
+      setState(() {
+        widget.monster.actions.forEach((Map action){
+          controllers[index] = new TextEditingController();
+          controllers[index]?.text = action['name'];
+          descControllers[index] = new TextEditingController();
+          descControllers[index]?.text = action['name'];
+          index += 1;
+        });
+      });
+
+  }}
+
   makeTraitsRow() {
     List<Widget> traitsRows = [];
-
     controllers.forEach((rowIndex, controller) {
       traitsRows.add(traitsRow(rowIndex,controller));
       traitsRows.add(Container(height: 8));
@@ -118,7 +145,7 @@ class _AddActionsRow extends State<AddActionsRow> {
           child: Container(
             //width: MediaQuery.of(context).size.width / 1.6, //todo fix widths to match
             decoration: BoxDecoration(
-              border: Border.all(color: Theme.of(context).colorScheme.onSurface),
+              //border: Border.all(color: Theme.of(context).colorScheme.onSurface),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Padding(
@@ -140,6 +167,7 @@ class _AddActionsRow extends State<AddActionsRow> {
 
   @override
   Widget build(BuildContext context) {
+    setControllers();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
@@ -179,14 +207,14 @@ class AddActions {
           child: Center(child: Text(
               'Actions', style: TextStyle(fontWeight: FontWeight.w900))),
         ),
-        AddActionsRow(field: 'Action',key: actionsKey),
+        AddActionsRow(field: 'Action',key: actionsKey, monster: monster),
         Divider(),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Center(child: Text('Legendary Actions',
               style: TextStyle(fontWeight: FontWeight.w900))),
         ),
-        AddActionsRow(field: 'Legendary Action',key: legendaryActionsKey)
+        AddActionsRow(field: 'Legendary Action',key: legendaryActionsKey, monster: monster)
       ],
     );
   }

@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
+import 'package:monster_compendium/screens/home/monster_view(backup).dart';
+import 'package:monster_compendium/services/monster_storage.dart';
 import '../../components/monster_view_factory/actions_factory.dart';
 import '../../components/monster_view_factory/details_factory.dart';
 import '../../components/loading_shimmer.dart';
@@ -141,18 +144,18 @@ class _MonsterView extends State<MonsterView> {
                                       ],
                                     ),
                                     Text.rich(
-                                    TextSpan(text: '',
-                                        children: [
-                                          TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
-                                          //TextSpan(text: statblock.get('speed')['walk']),
-                                          //todo function this??? \/\/\/
-                                          if(statblock.get('speed')['walk'] != null)TextSpan(text: snapshot.data!.get('speed')['walk']),
-                                          if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
-                                          if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
-                                          if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
-                                          if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
-                                        ]
-                                    )
+                                        TextSpan(text: '',
+                                            children: [
+                                              TextSpan(text:'Speed ',style: TextStyle(fontWeight: FontWeight.bold)),
+                                              //TextSpan(text: statblock.get('speed')['walk']),
+                                              //todo function this??? \/\/\/
+                                              if(statblock.get('speed')['walk'] != null)TextSpan(text: snapshot.data!.get('speed')['walk']),
+                                              if(statblock.get('speed')['burrow'] != null)TextSpan(text:', Burrow '+snapshot.data!.get('speed')['burrow']),
+                                              if(statblock.get('speed')['climb'] != null)TextSpan(text:', Climb '+snapshot.data!.get('speed')['climb']),
+                                              if(statblock.get('speed')['fly'] != null)TextSpan(text:', Fly '+snapshot.data!.get('speed')['fly']),
+                                              if(statblock.get('speed')['swim'] != null)TextSpan(text:', Swim '+snapshot.data!.get('speed')['swim']),
+                                            ]
+                                        )
                                     ),
                                   ],
                                 )
@@ -234,20 +237,25 @@ class _MonsterView extends State<MonsterView> {
                   ],
                 ),
                 appBar: AppBar(
-                  elevation: 0.0,
-                  titleSpacing: 10.0,
-                  title: Text(statblock.get('name')),
-                  bottom: PreferredSize(preferredSize: Size.zero,
-                      child: Text(statblock.get('size')+' '+statblock.get('type')+', '+statblock.get('alignment'))),
-                  centerTitle: true,
-                  leading: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back_ios,
+                    elevation: 0.0,
+                    titleSpacing: 10.0,
+                    title: Text(statblock.get('name')),
+                    bottom: PreferredSize(preferredSize: Size.zero,
+                        child: Text(statblock.get('size')+' '+statblock.get('type')+', '+statblock.get('alignment'))),
+                    centerTitle: true,
+                    leading: InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                      ),
                     ),
-                  ),
+                    actions: [
+                      Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child:editButton(statblock,getArgs()?[0],context))
+                    ]
                 )
             );
           };
@@ -411,4 +419,17 @@ Widget loading(context){
         ),
       )
   );
+}
+
+editButton(statblock,uid,context){
+  if(statblock.get('creator_id') == FirebaseAuth.instance.currentUser?.uid) {
+    MonsterStore ms = MonsterStore.fromMap(statblock.data());
+    return InkWell(
+      onTap: () {
+      Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [ms,uid]);
+    },
+      child: Icon(
+        Icons.edit,
+      ),);
+  }
 }

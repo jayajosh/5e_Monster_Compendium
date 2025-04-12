@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/components/monster_edit_factory/edit_details_factory.dart';
 import 'package:monster_compendium/components/photo_border.dart';
-import '../../../services/photo_service.dart';
 import '../../../components/monster_edit_factory/edit_actions_factory.dart';
+import '../../../components/monster_edit_factory/edit_details_factory.dart';
 import '../../../components/monster_edit_factory/monster_fields_factory.dart';
+import '../../../components/monster_view_factory/actions_factory.dart';
+import '../../../components/monster_view_factory/details_factory.dart';
 import '../../../components/loading_shimmer.dart';
 import '../../../components/stat_icons.dart';
 import '../../../services/monster_storage.dart';
+import '../../../services/photo_service.dart';
 
 ValueNotifier<int> indexNotifier = ValueNotifier<int>(0);
 Widget noData = Center(child: Text("Data does not exist")); //todo column center and maybe add icon
-//todo maybe refactor delete out /\/\/\
 
 
-class AddMonster extends StatefulWidget {
+class EditMonster extends StatefulWidget {
   @override
-  _AddMonster createState() => _AddMonster();
+  _EditMonster createState() => _EditMonster();
 }
 
-class _AddMonster extends State<AddMonster> {
+class _EditMonster extends State<EditMonster> {
 
   TextEditingController bottomController = new TextEditingController();
 
   TextEditingController crController = new TextEditingController(); //todo deprecate this
 
-  MonsterStore monsterStorage = MonsterStore();
+  late MonsterStore monsterStorage;
 
   TextEditingController descriptionController = new TextEditingController();
 
@@ -34,13 +35,42 @@ class _AddMonster extends State<AddMonster> {
     });
   }
 
+  getArgs<DocumentReference>() {
+    List? args = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as List?;
+    return args;
+  }
+
+  @override
+  void initState() { //todo possibly delete
+    super.initState();
+    try {monsterStorage = getArgs()?[0];}catch(e) {
+      print(e); //todo snackbar it
+      monsterStorage = MonsterStore();
+       }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    try {
+      monsterStorage = getArgs()?[0];
+      _updateBottomText('${monsterStorage.size} ${monsterStorage.type}, ${monsterStorage.alignment}');
+    }catch(e) {
+      print(e); //todo snackbar it
+    }
+
+    if(monsterStorage.monster_description != null){
+      setState((){descriptionController.text = monsterStorage.monster_description!;});
+    }
+
     final details = AddDetails(monster: monsterStorage);
     final actions = AddActions(monster: monsterStorage);
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SingleChildScrollView(
             child: SizedBox(
@@ -95,13 +125,13 @@ class _AddMonster extends State<AddMonster> {
                                       children: [
                                         Expanded(
                                           child: Center(
-                                            child: MonsterIconButton(icon: Icons.shield_outlined,text1: 'AC',text2: 'Type',ac: true,monster: monsterStorage)
-                                            ),
+                                              child: MonsterIconButton(icon: Icons.shield_outlined,text1: 'AC',text2: 'Type',ac: true,monster: monsterStorage)
                                           ),
+                                        ),
                                         Expanded(
                                           child: Center(
                                             child: MonsterIconButton(icon: Icons.favorite_outline,text1: 'HP',text2: 'HitDice',ac: false,monster: monsterStorage),
-                                        ),
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -180,6 +210,7 @@ class _AddMonster extends State<AddMonster> {
                           Divider(),
                           Expanded( // Add this to allow scrolling inside
                             child: SingleChildScrollView( //todo needs a height can be flexible through a column
+                              //todo make for each tab individually & apply to add factory
                               child: ValueListenableBuilder<int>(
                                 valueListenable: indexNotifier,
                                 builder: (context, index, child) {
@@ -192,7 +223,8 @@ class _AddMonster extends State<AddMonster> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: TextField(
                                           maxLines: null,
-                                          controller: descriptionController,
+                                          onChanged: (String newText) {monsterStorage.monster_description = newText;},
+                                          controller: descriptionController, //todo set this aswell
                                           decoration: const InputDecoration(
                                             hintText: 'Monster Description',
                                             labelText: 'Monster Description',
@@ -226,22 +258,22 @@ class _AddMonster extends State<AddMonster> {
               Navigator.pop(context);
             },
             child: Icon(
-              Icons.close,
+              Icons.arrow_back_ios,
             ),
           ),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
               child: InkWell(
-                onTap: () async {
-                  details.updateStorage();
-                  actions.updateStorage();
-                  monsterStorage.monster_description = descriptionController.text;
-                  monsterStorage.validate(context,true,null);
+                  onTap: () async {
+                    details.updateStorage();
+                    actions.updateStorage();
+                    monsterStorage.monster_description = descriptionController.text;
+                    monsterStorage.validate(context,false,getArgs()[1]);
                   },
-                child:
+                  child:
                   Icon(
-                    Icons.save //todo find different icon or button ??
+                      Icons.save //todo find different icon or button ??
                   )
               ),
             )
@@ -251,10 +283,37 @@ class _AddMonster extends State<AddMonster> {
   }
 }
 
-modifier(int value){
+modifier(int value){ //todo check
   String modifier;
   value <= 10 ? modifier = ((value-10)/2).truncate().toString():modifier = '+'+((value-10)/2).truncate().toString();
   return modifier;
+}
+
+scoreBlock(context,String stat,data) {
+  String statText = stat.substring(0,3).toUpperCase();
+  return Flexible(
+    child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children:[
+          Flexible(child: Center(child: Text(statText,style: TextStyle(fontWeight: FontWeight.bold)))),
+          Flexible(child:
+          Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                Icon(Stat.stat,size: 60),
+                Column(children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,8),
+                    child: Text(data.get('ability_scores')[stat].toString(),style: TextStyle(fontWeight: FontWeight.w900)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(0,0,0,2),
+                    child: Text(modifier(data.get('ability_scores')[stat]),style: TextStyle(color: Theme.of(context).colorScheme.onSecondary,fontWeight: FontWeight.w900),), //todo update text colour or fix frame
+                  )
+                ])
+              ])),
+        ]),
+  );
 }
 
 infoButton(context,IconData icon,String name,int i) { //todo rename
@@ -273,10 +332,22 @@ infoButton(context,IconData icon,String name,int i) { //todo rename
   );
 }
 
-/*checkIfSectionEmpty(Column func){
+checkIfSectionEmpty(Column func){
   if(func.children.isEmpty){return noData;}
   return func;
-}*/
+}
+
+Widget getMonsterSection(int index, data) {
+  if (index == 0) {
+    return checkIfSectionEmpty(details(data));
+  } else if (index == 1) {
+    return checkIfSectionEmpty(actions(data));
+  } else {
+    if(data['monster_description'] == ''){return noData;}
+    else{return Align(alignment: Alignment.topLeft, child: Text(data['monster_description']));}
+  }
+}
+
 
 Widget loading(context){
   return Scaffold(
@@ -343,6 +414,7 @@ Widget loading(context){
         ),
       ),
       appBar: AppBar(
+        //todo get name as arg for title
         leading: InkWell(
           onTap: () {
             Navigator.pop(context);

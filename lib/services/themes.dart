@@ -26,9 +26,9 @@ class ThemeNotifier with ChangeNotifier, WidgetsBindingObserver {
     //brightness: Brightness.light,
     colorScheme: ColorScheme.light(
       primary: Color(0xFFA30D0D), // Deep Red
-      onPrimary: Colors.white,
+      onPrimary: Colors.black,
       secondary: Color(0xFFC9A643), // Gold
-      onSecondary: Colors.black,
+      onSecondary: Colors.white,
       surface: Color(0xFFF5E8C7), // Parchment
       surfaceContainerLow: Color(0xFFE0D8CC), // Light gray for cards
       onSurface: Color(0xFF1E1E1E), // Dark text
