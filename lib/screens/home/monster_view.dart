@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
-import 'package:monster_compendium/screens/home/monster_view(backup).dart';
 import 'package:monster_compendium/services/monster_storage.dart';
 import '../../components/monster_view_factory/actions_factory.dart';
 import '../../components/monster_view_factory/details_factory.dart';
