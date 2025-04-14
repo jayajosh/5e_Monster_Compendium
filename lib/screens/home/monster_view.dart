@@ -421,12 +421,12 @@ Widget loading(context){
   );
 }
 
-editButton(statblock,uid,context){
+editButton(statblock,mid,context){
   if(statblock.get('creator_id') == FirebaseAuth.instance.currentUser?.uid) {
     MonsterStore ms = MonsterStore.fromMap(statblock.data());
     return InkWell(
       onTap: () {
-      Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [ms,uid]);
+      Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [ms,mid]);
     },
       child: Icon(
         Icons.edit,

@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:monster_compendium/services/monster_storage.dart';
 
 class StatblockGenerator extends StatefulWidget {
   @override
@@ -11,7 +14,7 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _crController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _statblockResult = '';
+  var _statblockResult;
   bool _isLoading = false;
 
   Future<void> _callGenerateStatblock() async {
@@ -41,12 +44,17 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
       ).timeout(const Duration(seconds: 300));
       // Check for errors
       if (response.statusCode == 200) {
+        //final uid = FirebaseAuth.instance.currentUser?.uid;
         final Map<String, dynamic> responseData = json.decode(response.body);
         setState(() {
-          _statblockResult = responseData['statblock'] ?? 'No statblock found'; // Display result
+          _statblockResult = responseData['statblock']?.toString() ?? 'No statblock found'; // Display result
+          MonsterStore monster = MonsterStore.fromMap(responseData['statblock']);
+          Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [monster,null]);
         });
       } else {
         setState(() {
+
+
           _statblockResult = 'Error: ${response.statusCode} - ${response.body}';
         });
       }
@@ -100,7 +108,7 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
             const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
-                child: Text(_statblockResult),
+                child: Text(_statblockResult.toString()),
               ),
             ),
           ],

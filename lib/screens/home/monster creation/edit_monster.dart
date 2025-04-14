@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/components/photo_border.dart';
 import '../../../components/monster_edit_factory/edit_actions_factory.dart';
@@ -269,7 +270,13 @@ class _EditMonster extends State<EditMonster> {
                     details.updateStorage();
                     actions.updateStorage();
                     monsterStorage.monster_description = descriptionController.text;
-                    monsterStorage.validate(context,false,getArgs()[1]);
+                    if(getArgs()[1] == null){
+                      //String id = FirebaseFirestore.instance.collection('Monsters').doc().id;
+                      monsterStorage.validate(context,true,null);
+                    }
+                    else{
+                      monsterStorage.validate(context,false,getArgs()[1]);
+                    }
                   },
                   child:
                   Icon(
