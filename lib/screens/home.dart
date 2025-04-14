@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
+import 'package:monster_compendium/screens/home/edit_list.dart';
 import '../components/avatar.dart';
 import '../components/bookmark_drawer_setup.dart';
 import '../components/center_button_nav.dart';
@@ -20,8 +21,8 @@ class _Home extends State<Home>{
   late List<Widget> _page = [
     MonsterSearch(key: monsterSearchKey),
     Center(child: RoundedButton(text: "SignOut2", press: () {})),
-    Center(child: RoundedButton(text: "SignOut3", press: () {})),
-    AddMonster(),
+    Center(),//Navigator.pushNamed(context, '/Home/AddMonster'),
+    EditList(),
     Center(child: StatblockGenerator()),
   ];
   GlobalKey<State<MonsterSearch>> monsterSearchKey = new GlobalKey<State<MonsterSearch>>();
