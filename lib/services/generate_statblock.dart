@@ -52,8 +52,6 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
         });
       } else {
         setState(() {
-
-
           _statblockResult = 'Error: ${response.statusCode} - ${response.body}';
         });
       }
@@ -107,12 +105,25 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
             const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
-                child: Text(_statblockResult.toString()),
+                child: progress(_statblockResult)//Text(_statblockResult.toString()),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+progress(String? _statblockResult){
+  if(_statblockResult == null){
+    return Text('null');
+  }
+  else if(_statblockResult.startsWith('Error:')){
+    print('yep');
+    return CircularProgressIndicator();
+  }
+  else {
+    return CircularProgressIndicator();
   }
 }
