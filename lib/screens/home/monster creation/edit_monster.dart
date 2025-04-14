@@ -269,7 +269,13 @@ class _EditMonster extends State<EditMonster> {
                     details.updateStorage();
                     actions.updateStorage();
                     monsterStorage.monster_description = descriptionController.text;
-                    monsterStorage.validate(context,false,getArgs()[1]);
+                    if(getArgs()[1] == null){
+                      //String id = FirebaseFirestore.instance.collection('Monsters').doc().id;
+                      monsterStorage.validate(context,true,null);
+                    }
+                    else{
+                      monsterStorage.validate(context,false,getArgs()[1]);
+                    }
                   },
                   child:
                   Icon(

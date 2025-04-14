@@ -99,62 +99,102 @@ class MonsterStore {
         created_at = createdAt ?? DateTime.now();
 
   factory MonsterStore.fromMap(Map<String, dynamic> map) {
-    // Converts firestore to class
+    // 1. Helper Functions for Type Conversion and Null Handling
+    // These are now inside the factory constructor for better encapsulation
+    double? _toDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      return double.tryParse(value.toString());
+    }
+
+    int? _toInt(dynamic value) {
+      if (value == null) return null;
+      if (value is int) return value;
+      return int.tryParse(value.toString());
+    }
+
+    String? _toString(dynamic value) {
+      if (value == null) return null;
+      return value.toString();
+    }
+
+    Map<String, String?>? _toStringMap(Map<dynamic, dynamic>? map) {
+      if (map == null) return null;
+      Map<String, String?> result = {};
+      map.forEach((key, value) {
+        if (key is String) { // Ensure the key is a String
+          result[key] = _toString(value);
+        }
+        // else, you could log an error, or skip.  I'm skipping for now.
+      });
+      return result;
+    }
+
+    Map<String, int?>? _toIntMap(Map<dynamic, dynamic>? map) {
+      if (map == null) return null;
+      Map<String, int?> result = {};
+      map.forEach((key, value) {
+        if (key is String) {
+          result[key] = _toInt(value);
+        }
+      });
+      return result;
+    }
+
+    Map<String?, double?>? _toDoubleMap(Map<dynamic, dynamic>? map) {
+      if (map == null) return null;
+      Map<String?, double?> result = {};
+      map.forEach((key, value) {
+        result[_toString(key)] = _toDouble(value);
+      });
+      return result;
+    }
+
+    List<String?>? _toStringList(List? list) {
+      if (list == null) return null;
+      return list.map((item) => _toString(item)).toList();
+    }
+
+    List<Map<String?, String?>>? _toListOfMaps(List? list) {
+      if (list == null) return null;
+      List<Map<String?, String?>> result = [];
+      for (var item in list) {
+        if (item is Map) {
+          result.add(_toStringMap(item) ?? {});
+        } else {
+          result.add({}); // Handle non-map items, important to prevent errors
+        }
+      }
+      return result;
+    }
+
+    // 2. Extract and Convert Data
+    // Now using the helper functions defined above
     return MonsterStore(
-      name: map['name'],
-      size: map['size'],
-      type: map['type'],
-      alignment: map['alignment'],
-      cr: map['cr'] is int ? (map['cr'] as int).toDouble() : map['cr'],
-      //handles int or double
-      ac: map['ac'] is Map ? Map<String, dynamic>.from(map['ac']) : {
-        'type': null,
-        'value': null
-      },
-      hit_points: map['hit_points'],
-      hit_dice: map['hit_dice'],
-      speed: map['speed'] is Map ? Map<String, String?>.from(map['speed']) : {},
-      ability_scores: map['ability_scores'] is Map
-          ? Map<String, int?>.from(map['ability_scores'])
-          : {},
-      saving_throws: map['saving_throws'] is Map
-          ? Map<String?, double?>.from(map['saving_throws'])
-          : {},
-      skills: map['skills'] is Map
-          ? Map<String?, double?>.from(map['skills'])
-          : {},
-      condition_immunities: map['condition_immunities'] is List // Added fromMap
-          ? List<String?>.from(map['condition_immunities'])
-          : [],
-      damage_resistances: map['damage_resistances'] is List
-          ? List<String?>.from(map['damage_resistances'])
-          : [],
-      damage_immunities: map['damage_immunities'] is List
-          ? List<String?>.from(map['damage_immunities'])
-          : [],
-      damage_vulnerabilities: map['damage_vulnerabilities'] is List
-          ? List<String?>.from(map['damage_vulnerabilities'])
-          : [],
-      senses: map['senses'] is Map ? Map<String?, String?>.from(map['senses']) : {},
-      languages:
-      map['languages'] is List ? List<String?>.from(map['languages']) : [],
-      special_abilities: map['special_abilities'] is List
-          ? (map['special_abilities'] as List)
-          .map((item) => Map<String?, String?>.from(item))
-          .toList()
-          : [],
-      actions: map['actions'] is List
-          ? (map['actions'] as List)
-          .map((item) => Map<String?, String?>.from(item))
-          .toList()
-          : [],
-      legendary_actions: map['legendary_actions'] is List
-          ? (map['legendary_actions'] as List)
-          .map((item) => Map<String?, String?>.from(item))
-          .toList()
-          : [],
-      monster_description: map['monster_description'],
-      image_url: map['image_url'],
+      name: _toString(map['name']),
+      size: _toString(map['size']),
+      type: _toString(map['type']),
+      alignment: _toString(map['alignment']),
+      cr: _toDouble(map['cr']),
+      ac: map['ac'] is Map ? Map<String, dynamic>.from(map['ac']) : null, //keep original structure
+      hit_points: _toDouble(map['hit_points']),
+      hit_dice: _toString(map['hit_dice']),
+      speed: _toStringMap(map['speed']),
+      ability_scores: _toIntMap(map['ability_scores']),
+      saving_throws: _toDoubleMap(map['saving_throws']),
+      skills: _toDoubleMap(map['skills']),
+      condition_immunities: _toStringList(map['condition_immunities']),
+      damage_resistances: _toStringList(map['damage_resistances']),
+      damage_immunities: _toStringList(map['damage_immunities']),
+      damage_vulnerabilities: _toStringList(map['damage_vulnerabilities']),
+      senses: _toStringMap(map['senses']),
+      languages: _toStringList(map['languages']),
+      special_abilities: _toListOfMaps(map['special_abilities']),
+      actions: _toListOfMaps(map['actions']), //todo fix descriptions
+      legendary_actions: _toListOfMaps(map['legendary_actions']),//todo fix descriptions & check not a dupe of actions
+      monster_description: _toString(map['monster_description']),
+      image_url: map['image_url'] ?? null,
       creator_id: map['creator_id'] ?? '',
       createdAt: map['created_at'] is String
           ? DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now()
@@ -206,6 +246,17 @@ class MonsterStore {
       duration: const Duration(seconds: 5),
     )));
 
+  }
+
+  static Future<bool> doesDocumentExist(String collectionPath, String documentId) async {
+    try {
+      DocumentReference docRef = FirebaseFirestore.instance.collection(collectionPath).doc(documentId);
+      DocumentSnapshot docSnapshot = await docRef.get();
+      return docSnapshot.exists;
+    } catch (e) {
+      print("Error checking document existence: $e");
+      return false; //  Return false on error, or rethrow as needed.
+    }
   }
 
   update(context,Map monsterMap, id) async {
