@@ -48,6 +48,7 @@ class _StatblockGeneratorState extends State<StatblockGenerator> {
         setState(() {
           _statblockResult = responseData['statblock']?.toString() ?? 'No statblock found'; // Display result
           MonsterStore monster = MonsterStore.fromMap(responseData['statblock']);
+          _statblockResult = null;
           Navigator.pushNamed(context, '/Home/MonsterView/EditMonster',arguments: [monster,null]);
         });
       } else {
