@@ -27,30 +27,32 @@ class MonsterSearch extends StatefulWidget {
 
 class _MonsterSearch extends State<MonsterSearch> {
   TextEditingController _controller = new TextEditingController(text: "");
-  ScrollController _scrollController = new ScrollController(); //todo check and delete
+  /*ScrollController _scrollController = new ScrollController();
   List<QueryDocumentSnapshot> _monsterList = [];
-
-
   int loadedIndex = 0;
-
-  var lastItem;
+  var lastItem;*/
 
   String search = "";
 
   List bookmarked = [];
 
   createQuery() {
-    var monsterQuery = MonsterRef.withConverter(
+    Query<MonsterStore> monsterQuery = MonsterRef.withConverter(
         fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
         toFirestore: (MonsterStore, _) => MonsterStore.toMap()
     );
-    /*locator<ActiveFilters>().getOn() ?
+    locator<ActiveFilters>().getOn() ?
     monsterQuery = MonsterRef//.startAfterDocument(_monsterList.last)
         .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
         .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
-        .limit(20)
-        .get()
-        : monsterQuery = MonsterRef.limit(20).get();*/
+        .withConverter(
+        fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
+        toFirestore: (MonsterStore, _) => MonsterStore.toMap()
+    )
+        : monsterQuery = MonsterRef.withConverter(
+    fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
+    toFirestore: (MonsterStore, _) => MonsterStore.toMap()
+    );;
     return monsterQuery;/*var monsterQuery = MonsterRef.limit(20).get();
     locator<ActiveFilters>().getOn() ?
     monsterQuery = MonsterRef//.startAfterDocument(_monsterList.last)
@@ -64,13 +66,7 @@ class _MonsterSearch extends State<MonsterSearch> {
 
   PopUpItems(uid) {
     return [
-      PopupMenuItem(value: "view",
-          child: Row(children: [
-            Padding(padding: const EdgeInsets.only(right: 10.0),
-                child: Icon(Icons.map)),
-            Text("View Route")
-          ])),
-      PopupMenuItem(value: "copy",
+      PopupMenuItem(value: "copy to homebrewery",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
                 child: Icon(Icons.copy)),
@@ -178,7 +174,7 @@ class _MonsterSearch extends State<MonsterSearch> {
       });
     });
     //routes = [];
-    lastItem = null;
+    //lastItem = null;
     //setBookmarked();
   }
 
