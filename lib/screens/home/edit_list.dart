@@ -42,21 +42,29 @@ class _EditList extends State<EditList> {
     return monsterQuery;
   }
 
-  PopUpItems(uid) {
+  popUpBuilder(doc){
+    return PopupMenuButton(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (context) {return popUpItems();},
+      onSelected: (value) {
+        if(value == "copy"){/*copy()*/}
+        else if (value == "save"){/*save("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
+        else if (value == "unsave"){/*unsave("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
+        else if (value == "qr"){/*qr("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
+        else if (value == "share"){/*share("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
+        else {view(doc.id);}
+      },
+    );
+  }
+
+  popUpItems() {
     return [
-      PopupMenuItem(value: "view",
-          child: Row(children: [
-            Padding(padding: const EdgeInsets.only(right: 10.0),
-                child: Icon(Icons.map)),
-            Text("View Route")
-          ])),
       PopupMenuItem(value: "copy",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
                 child: Icon(Icons.copy)),
-            Text("Clone Route")
+            Text("Copy to Homebrewery")
           ])),
-      bookmarkCheck(uid),
       PopupMenuItem(value: "qr",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
@@ -69,28 +77,9 @@ class _EditList extends State<EditList> {
                 child: Transform(alignment: Alignment.center,
                     transform: Matrix4.rotationY(3.14),
                     child: Icon(Icons.reply))),
-            Text("Share Route")
+            Text("Share Monster")
           ])),
     ];
-  }
-
-  PopupMenuItem bookmarkCheck(uid) {
-    if (bookmarked.contains(uid)) {
-      return PopupMenuItem(value: "unsave",
-          child: Row(children: [
-            Padding(padding: const EdgeInsets.only(right: 10.0),
-                child: Icon(Icons.bookmark)),
-            Text("Unsave Route")
-          ]));
-    }
-    else {
-      return PopupMenuItem(value: "save",
-          child: Row(children: [
-            Padding(padding: const EdgeInsets.only(right: 10.0),
-                child: Icon(Icons.bookmark_border)),
-            Text("Save Route")
-          ]));
-    }
   }
 
   view(uid) async {
@@ -156,7 +145,7 @@ class _EditList extends State<EditList> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //todo refactor to match monster search
     createQuery();
     Size size = MediaQuery
         .of(context)
@@ -197,7 +186,7 @@ class _EditList extends State<EditList> {
                 body: ListView.builder(
                     itemCount: snapshot.data?.size,
                     itemBuilder: (BuildContext context, int index) {
-                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){view(snapshot.data?.docs[index].id);},context);
+                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){view(snapshot.data?.docs[index].id);},popUpBuilder(snapshot.data?.docs[index]),context);
                     }
                 ));
           }
