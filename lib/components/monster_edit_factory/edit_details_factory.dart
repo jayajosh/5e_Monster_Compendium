@@ -601,15 +601,18 @@ class _AddDetailsTraitsRow extends State<AddDetailsTraitsRow> {
               ],
             ),
             Container(height: 8),
-            Container( // Value
-              child: TextField(
-                maxLines: null,
-                controller: descControllers[key],
-                decoration: const InputDecoration(
-                  hintText: 'Trait Description',
-                  labelText: 'Trait Description',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Container( // Value
+                child: TextField(
+                  maxLines: null,
+                  controller: descControllers[key],
+                  decoration: const InputDecoration(
+                    hintText: 'Trait Description',
+                    labelText: 'Trait Description',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                  ),
                 ),
               ),
             ),

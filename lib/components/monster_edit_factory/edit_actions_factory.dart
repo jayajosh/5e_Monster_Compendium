@@ -76,15 +76,18 @@ class _AddActionsRow extends State<AddActionsRow> {
               ],
             ),
             Container(height: 8),
-            Container( // Value
-              child: TextField(
-                maxLines: null,
-                controller: descControllers[key],
-                decoration: InputDecoration(
-                  hintText: '${widget.field} Description',
-                  labelText: '${widget.field} Description',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Container( // Value
+                child: TextField(
+                  maxLines: null,
+                  controller: descControllers[key],
+                  decoration: InputDecoration(
+                    hintText: '${widget.field} Description',
+                    labelText: '${widget.field} Description',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                  ),
                 ),
               ),
             ),
