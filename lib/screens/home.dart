@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
 import 'package:monster_compendium/screens/home/edit_list.dart';
 import '../components/avatar.dart';
@@ -8,8 +7,6 @@ import '../components/center_button_nav.dart';
 import '../components/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
 import '../services/generate_statblock.dart';
-
-import '../components/rounded_button.dart';
 
 class Home extends StatefulWidget {
   Home({int? currentIndex});
@@ -20,9 +17,9 @@ class Home extends StatefulWidget {
 class _Home extends State<Home>{
   late List<Widget> _page = [
     MonsterSearch(key: monsterSearchKey),
-    Center(child: RoundedButton(text: "SignOut2", press: () {})),
-    Center(),//Navigator.pushNamed(context, '/Home/AddMonster'),
     EditList(),
+    Center(),//Navigator.pushNamed(context, '/Home/AddMonster'),
+    Center(child: Text('Coming Soon')),
     Center(child: StatblockGenerator()),
   ];
   GlobalKey<State<MonsterSearch>> monsterSearchKey = new GlobalKey<State<MonsterSearch>>();
@@ -92,37 +89,41 @@ class _Home extends State<Home>{
       ),
       drawer: BookmarkDrawerSetup(),
       endDrawer: ProfileDrawerSetup(),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: BottomAppBar( //todo refactor to be just bottom app bar with custom button widgets
+        height: 56,
         shape: CircularNotchedRectangle(),
-        child: Wrap( children:[
-          BottomNavigationBar(
+        notchMargin: 16,
+        child: Wrap(
+          children: [
+            BottomNavigationBar(
+            elevation: 0,
             type: BottomNavigationBarType.fixed,
             items: [BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
             ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
+                icon: Icon(Icons.edit),
+                label: 'Edit',
               ),
               BottomNavigationBarItem(
                 icon: Icon(null),
                 label: '',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.edit),
-                label: 'Edit',
+                icon: Icon(Icons.group),
+                label: 'Encounter',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.auto_awesome),
                 label: 'Generate',
               ),
             ],
-/*          showUnselectedLabels: false,
+                  /*          showUnselectedLabels: false,
             showSelectedLabels: false,*/
             currentIndex: currentIndex,
             onTap: onTapped,
-          )
+          ),
         ]
         ),
       ),
