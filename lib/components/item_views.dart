@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget MonsterSetupBasic(double cr, String name, GestureTapCallback onTap, BuildContext context) {
+Widget MonsterSetupBasic(double cr, String name, GestureTapCallback onTap,  popUpBuilder, BuildContext context) {
   String crText;
   cr==0 ? crText = "0" : cr>=1 ? crText = cr.truncate().toString() : crText = "1/"+(1/cr).truncate().toString();
 
@@ -11,7 +11,7 @@ Widget MonsterSetupBasic(double cr, String name, GestureTapCallback onTap, Build
           .width * 0.1),
       leading: Text('CR\n' + crText,textAlign: TextAlign.center),
       title: Text(name),
-      trailing: Icon(Icons.more_vert),
+      trailing: popUpBuilder,
       onTap: onTap
   );
 }

@@ -64,13 +64,28 @@ class _MonsterSearch extends State<MonsterSearch> {
     return monsterQuery;*/
   }
 
-  PopUpItems(uid) {
+  popUpBuilder(doc){
+    return PopupMenuButton(
+      icon: Icon(Icons.more_vert),
+      itemBuilder: (context) {return popUpItems();},
+      onSelected: (value) {
+        if(value == "copy"){/*copy()*/}
+        else if (value == "save"){/*save("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
+        else if (value == "unsave"){/*unsave("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
+        else if (value == "qr"){/*qr("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
+        else if (value == "share"){/*share("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
+        else {view(doc.id);}
+      },
+    );
+  }
+
+  popUpItems() {
     return [
-      PopupMenuItem(value: "copy to homebrewery",
+      PopupMenuItem(value: "copy",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
                 child: Icon(Icons.copy)),
-            Text("Clone Route")
+            Text("Copy to Homebrewery")
           ])),
       bookmarkCheck(uid),
       PopupMenuItem(value: "qr",
@@ -85,7 +100,7 @@ class _MonsterSearch extends State<MonsterSearch> {
                 child: Transform(alignment: Alignment.center,
                     transform: Matrix4.rotationY(3.14),
                     child: Icon(Icons.reply))),
-            Text("Share Route")
+            Text("Share Monster")
           ])),
     ];
   }
@@ -96,7 +111,7 @@ class _MonsterSearch extends State<MonsterSearch> {
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
                 child: Icon(Icons.bookmark)),
-            Text("Unsave Route")
+            Text("Unsave Monster")
           ]));
     }
     else {
@@ -104,7 +119,7 @@ class _MonsterSearch extends State<MonsterSearch> {
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
                 child: Icon(Icons.bookmark_border)),
-            Text("Save Route")
+            Text("Save Monster")
           ]));
     }
   }
@@ -195,7 +210,7 @@ class _MonsterSearch extends State<MonsterSearch> {
       loadingBuilder: (context) => const CircularProgressIndicator(),
       itemBuilder: (context, doc) {
         final monster = doc.data();
-        return MonsterSetupBasic(monster.cr!.toDouble(),monster.name!,(){view(doc.id);},context);
+        return MonsterSetupBasic(monster.cr!.toDouble(),monster.name!,(){view(doc.id);},popUpBuilder(doc),context);
 
       },
     );
