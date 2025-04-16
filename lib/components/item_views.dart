@@ -4,7 +4,6 @@ Widget MonsterSetupBasic(double cr, String name, GestureTapCallback onTap, Build
   String crText;
   cr==0 ? crText = "0" : cr>=1 ? crText = cr.truncate().toString() : crText = "1/"+(1/cr).truncate().toString();
 
-
   return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: MediaQuery
           .of(context)

@@ -11,6 +11,7 @@ import '../../services/active_filters.dart';
 import '../../services/monster_storage.dart';
 import 'monster_view.dart';
 //import '../../services/dynamic_link.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -26,7 +27,9 @@ class MonsterSearch extends StatefulWidget {
 
 class _MonsterSearch extends State<MonsterSearch> {
   TextEditingController _controller = new TextEditingController(text: "");
-  //ScrollController _scrollController = new ScrollController(); //todo check and delete
+  ScrollController _scrollController = new ScrollController(); //todo check and delete
+  List<QueryDocumentSnapshot> _monsterList = [];
+
 
   int loadedIndex = 0;
 
@@ -37,15 +40,26 @@ class _MonsterSearch extends State<MonsterSearch> {
   List bookmarked = [];
 
   createQuery() {
-    var monsterQuery = MonsterRef.limit(20).get();
+    var monsterQuery = MonsterRef.withConverter(
+        fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
+        toFirestore: (MonsterStore, _) => MonsterStore.toMap()
+    );
+    /*locator<ActiveFilters>().getOn() ?
+    monsterQuery = MonsterRef//.startAfterDocument(_monsterList.last)
+        .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
+        .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
+        .limit(20)
+        .get()
+        : monsterQuery = MonsterRef.limit(20).get();*/
+    return monsterQuery;/*var monsterQuery = MonsterRef.limit(20).get();
     locator<ActiveFilters>().getOn() ?
-    monsterQuery = MonsterRef
+    monsterQuery = MonsterRef//.startAfterDocument(_monsterList.last)
         .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
         .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
         .limit(20)
         .get()
         : monsterQuery = MonsterRef.limit(20).get();
-    return monsterQuery;
+    return monsterQuery;*/
   }
 
   PopUpItems(uid) {
@@ -141,6 +155,19 @@ class _MonsterSearch extends State<MonsterSearch> {
   });
   }
 */
+/*  void loadmore(){
+    setState(() {
+      loadedIndex+=20;
+    });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      loadmore();
+    }
+  }*/
+
   @override
   void didUpdateWidget(oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -158,13 +185,26 @@ class _MonsterSearch extends State<MonsterSearch> {
   @override
   void initState() {
     super.initState();
+    //_scrollController.addListener(_onScroll);
     //setBookmarked();
   }
 
   @override
   Widget build(BuildContext context) {
-    createQuery();
-    Size size = MediaQuery
+    return FirestoreListView<MonsterStore>(
+      query: createQuery(),
+      pageSize:20,
+      emptyBuilder: (context) => const Text('No data'),
+      errorBuilder: (context, error, stackTrace) => Text(error.toString()),
+      loadingBuilder: (context) => const CircularProgressIndicator(),
+      itemBuilder: (context, doc) {
+        final monster = doc.data();
+        return MonsterSetupBasic(monster.cr!.toDouble(),monster.name!,(){view(doc.id);},context);
+
+      },
+    );
+
+    /* Size size = MediaQuery
         .of(context)
         .size;
 
@@ -183,14 +223,14 @@ class _MonsterSearch extends State<MonsterSearch> {
                 child: Text("Something went wrong")); //todo Use theme colour
           }
 
-/*          if (snapshot.hasData && !snapshot.data!.exists) {
+*//*          if (snapshot.hasData && !snapshot.data!.exists) {
             return Center(child: Text("No monster data exists"));
-          }*/
+          }*//*
 
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
                 resizeToAvoidBottomInset: false,
-                /*TextField(
+                *//*TextField(
                         controller: _controller, decoration: InputDecoration(
                           hintText: "Search",
                           hintStyle: TextStyle(color: Theme
@@ -199,10 +239,12 @@ class _MonsterSearch extends State<MonsterSearch> {
                               .bodyMedium
                               ?.color),
                           suffixIcon: clearIcon(_controller, context)),
-                      ),*/
+                      ),*//*
                 body: ListView.builder(
+                  controller: _scrollController,
                     itemCount: snapshot.data?.size,
                     itemBuilder: (BuildContext context, int index) {
+                    _monsterList.add(snapshot.data!.docs[index]);
                       return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){view(snapshot.data?.docs[index].id);},context);
                     }
                 ));
@@ -216,7 +258,7 @@ class _MonsterSearch extends State<MonsterSearch> {
               ],
             ));
           } //todo use theme colour
-        });
+        });*/
   }
 
 }
