@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
 import 'package:monster_compendium/screens/home/edit_list.dart';
 import '../components/avatar.dart';
-import '../components/bookmark_drawer_setup.dart';
+import '../components/drawer_factory/bookmark_drawer_setup.dart';
 import '../components/center_button_nav.dart';
-import '../components/profile_drawer_setup.dart';
+import '../components/drawer_factory/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
 import '../services/generate_statblock.dart';
 
