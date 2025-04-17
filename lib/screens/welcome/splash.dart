@@ -15,6 +15,7 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     if (loggedIn() == true) {
+      //todo get all user data here and cache it
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         Navigator.pushNamedAndRemoveUntil(context, "/Home", (routes) => false);
         });

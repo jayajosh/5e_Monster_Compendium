@@ -8,7 +8,7 @@ import '../../locator.dart';
 import '../../services/auth.dart';
 //import 'package:share/share.dart';
 import '../../services/active_filters.dart';
-import '../../services/monster_storage.dart';
+import '../../services/monster_factory.dart';
 import 'monster_view.dart';
 //import '../../services/dynamic_link.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';

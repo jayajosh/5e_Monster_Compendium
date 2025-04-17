@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster_search.dart';
 import 'package:monster_compendium/screens/home/edit_list.dart';
 import '../components/avatar.dart';
-import '../components/drawer_factory/bookmark_drawer_setup.dart';
+import '../components/drawer_constructors/bookmark_drawer_setup.dart';
 import '../components/center_button_nav.dart';
-import '../components/drawer_factory/profile_drawer_setup.dart';
+import '../components/drawer_constructors/profile_drawer_setup.dart';
 import '../components/search_filters.dart';
 import '../services/generate_statblock.dart';
 
@@ -18,7 +18,7 @@ class _Home extends State<Home>{
   late List<Widget> _page = [
     MonsterSearch(key: monsterSearchKey),
     EditList(),
-    Center(),//Navigator.pushNamed(context, '/Home/AddMonster'),
+    Center(),
     Center(child: Text('Coming Soon')),
     Center(child: StatblockGenerator()),
   ];

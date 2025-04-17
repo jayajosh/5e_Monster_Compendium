@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:monster_compendium/services/monster_storage.dart';
+import 'package:monster_compendium/services/monster_factory.dart';
 
 class StatblockGenerator extends StatefulWidget {
   @override

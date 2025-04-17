@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:monster_compendium/services/monster_storage.dart';
+import 'package:monster_compendium/services/monster_factory.dart';
 
 class AddDetailsNumberRow extends StatefulWidget {
   final String field;

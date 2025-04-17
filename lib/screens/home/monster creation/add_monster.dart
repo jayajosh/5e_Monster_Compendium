@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/components/monster_edit_factory/edit_details_factory.dart';
+import 'package:monster_compendium/components/monster_edit_constructors/edit_details_constructor.dart';
 import 'package:monster_compendium/components/photo_border.dart';
 import '../../../services/photo_service.dart';
-import '../../../components/monster_edit_factory/edit_actions_factory.dart';
-import '../../../components/monster_edit_factory/monster_fields_factory.dart';
+import '../../../components/monster_edit_constructors/edit_actions_constructor.dart';
+import '../../../components/monster_edit_constructors/monster_fields_constructor.dart';
 import '../../../components/loading_shimmer.dart';
 import '../../../components/stat_icons.dart';
-import '../../../services/monster_storage.dart';
+import '../../../services/monster_factory.dart';
 
 ValueNotifier<int> indexNotifier = ValueNotifier<int>(0);
 Widget noData = Center(child: Text("Data does not exist")); //todo column center and maybe add icon

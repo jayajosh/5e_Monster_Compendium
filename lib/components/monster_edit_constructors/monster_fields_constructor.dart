@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:monster_compendium/components/stat_icons.dart';
 
-import '../../services/monster_storage.dart';
+import '../../services/monster_factory.dart';
 
 class GeneralDetailsButton extends StatefulWidget {
 
