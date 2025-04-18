@@ -29,7 +29,7 @@ void registration(context, String username, String email, String password) async
           password: password
       );
       await _auth.currentUser!.updateProfile(displayName: username);
-      await set();
+      await setUser();
       userCredential = await _auth.signInWithEmailAndPassword(
           email: email,
           password: password
@@ -119,16 +119,21 @@ setPicture(file) async {
 */
 userSetup (uid,username){
   return {
-    "Username": username,
-    "PhotoUrl": null,
-    "Bio": null,
-    "SavedMonsters": [],
-    "LikedMonsters": [],
+    "username": username,
+    "image_url": null,
+    "bio": null,
+    "saved_monsters": [],
+    "liked_monsters": [],
   };
 }
 
-set() async {await storageRef.collection("Users").doc(_auth.currentUser?.uid).set(userSetup(_auth.currentUser?.uid,_auth.currentUser?.displayName));}
+setUser() async {await storageRef.collection("Users").doc(_auth.currentUser?.uid).set(userSetup(_auth.currentUser?.uid,_auth.currentUser?.displayName));}
 
 resetPass(email){
   _auth.sendPasswordResetEmail(email: email);
+}
+
+loadUser() async {
+  final userDoc = await storageRef.collection("Users").doc(_auth.currentUser?.uid).get();
+  return userDoc.data();
 }

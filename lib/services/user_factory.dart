@@ -26,11 +26,11 @@ class UserStore {
 
   factory UserStore.fromMap(Map<String, dynamic> map) {
     return UserStore(
-      username: map['name'],
-      bio: map['size'],
-      image_url: map['type'],
-      saved_monsters: map['alignment'],
-      liked_monsters: map['cr'],
+      username: map['username'],
+      bio: map['bio'],
+      image_url: map['image_url'],
+      saved_monsters: (map['saved_monsters'] as List<dynamic>).cast<String>().toList(),
+      liked_monsters: (map['liked_monsters'] as List<dynamic>).cast<String>().toList(),
     );
   }
 
