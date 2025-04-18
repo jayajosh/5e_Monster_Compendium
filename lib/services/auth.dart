@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:monster_compendium/components/platform_dialog.dart';
 //import 'package:monster_compendium/services/picture_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:monster_compendium/services/user_provider.dart';
+import 'package:provider/provider.dart';
 
-import 'auth.dart';
 import 'firestore.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -77,6 +77,7 @@ void login(context, String email, String password) async{
 
 logout(context) {
   FirebaseAuth.instance.signOut();
+  Provider.of<UserProvider>(context, listen: false).clearUser();
   SchedulerBinding.instance.addPostFrameCallback((_) async {
     Navigator.pushNamedAndRemoveUntil(context, "/Splash", (routes) => false);
   });

@@ -121,8 +121,7 @@ progress(String? _statblockResult){
     return Text('null');
   }
   else if(_statblockResult.startsWith('Error:')){
-    print('yep');
-    return CircularProgressIndicator();
+    return Text(_statblockResult); //todo make this fit the theme
   }
   else {
     return CircularProgressIndicator();

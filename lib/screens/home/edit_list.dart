@@ -2,15 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import '../../components/clearIcon.dart';
 import '../../components/item_views.dart';
-import '../../components/platform_dialog.dart';
-import '../../locator.dart';
-import '../../services/auth.dart';
 //import 'package:share/share.dart';
-import '../../services/active_filters.dart';
-import '../../services/monster_factory.dart';
-import 'monster_view.dart';
 //import '../../services/dynamic_link.dart';
 
 final db = FirebaseFirestore.instance;
@@ -37,7 +30,6 @@ class _EditList extends State<EditList> {
   List bookmarked = [];
 
   createQuery() {
-    print(FirebaseAuth.instance.currentUser?.uid);
     var monsterQuery = MonsterRef.limit(20).where('creator_id', isEqualTo: 'ifzGB7g8xNavV7LWrXhHWbE0Gyg2'/*FirebaseAuth.instance.currentUser?.uid.toString()*/).get();
     return monsterQuery;
   }

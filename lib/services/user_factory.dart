@@ -1,9 +1,7 @@
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/services/photo_service.dart';
 
 class UserStore {
   String uid = FirebaseAuth.instance.currentUser!.uid;

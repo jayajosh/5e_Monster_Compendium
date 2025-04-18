@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/add_monster.dart';
 import 'package:monster_compendium/screens/home/monster%20creation/edit_monster.dart';
+import 'package:monster_compendium/services/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Welcome/sign_up_page.dart';
 import 'locator.dart';
@@ -17,8 +18,15 @@ main() {
   setUpLocator();
 
   WidgetsFlutterBinding.ensureInitialized();
-  return runApp(ChangeNotifierProvider<ThemeNotifier>(create: (_) => new ThemeNotifier(),child: Main()));
-
+  return runApp(
+      MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ThemeNotifier>(create: (_) => new ThemeNotifier()),
+            ChangeNotifierProvider<UserProvider>(create: (_) => new UserProvider()),
+          ],
+          child: Main()
+      )
+  );
 }
 
 class Main extends StatefulWidget {
@@ -58,7 +66,7 @@ class _Main extends State<Main> with WidgetsBindingObserver{
               /*handleStartUpLogic(context);*/
               //handleLinks();
               if (snapshot.hasError) {
-                print ('An error has occured ${snapshot.error.toString()}');
+                print ('An error has occured ${snapshot.error.toString()}'); //todo logcat it
                 return Text('Something went wrong!');
               } else if (snapshot.hasData) {
                 return Splash();

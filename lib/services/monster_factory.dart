@@ -254,7 +254,7 @@ class MonsterStore {
       DocumentSnapshot docSnapshot = await docRef.get();
       return docSnapshot.exists;
     } catch (e) {
-      print("Error checking document existence: $e");
+      print("Error checking document existence: $e"); //todo logcat it
       return false; //  Return false on error, or rethrow as needed.
     }
   }

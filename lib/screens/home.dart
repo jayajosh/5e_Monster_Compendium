@@ -50,7 +50,7 @@ class _Home extends State<Home>{
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: InkWell(
-              child: Avatar(15.0,15.0),
+              child: avatar(15.0,15.0),
               onTap: () {mainScaffold.currentState?.openEndDrawer();},
             ),
           )],

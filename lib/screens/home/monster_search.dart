@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import '../../components/clearIcon.dart';
 import '../../components/item_views.dart';
-import '../../components/platform_dialog.dart';
 import '../../locator.dart';
 import '../../services/auth.dart';
 //import 'package:share/share.dart';
 import '../../services/active_filters.dart';
 import '../../services/monster_factory.dart';
-import 'monster_view.dart';
 //import '../../services/dynamic_link.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 

@@ -1,9 +1,6 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 //import 'package:image_gallery_saver/image_gallery_saver.dart';
 import '../services/auth.dart';
 //import 'package:firebase_database/firebase_database.dart';
