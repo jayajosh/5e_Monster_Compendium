@@ -81,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
 
-                    ///Unsed facebook, apple and google login - for later implementation
+                    ///todo Unused facebook, apple and google login - for later implementation
                     /*
                     /* Or Divider*/
                     Container(

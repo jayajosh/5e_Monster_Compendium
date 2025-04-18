@@ -174,7 +174,7 @@ class _GeneralDetailsButton extends State<GeneralDetailsButton> {
   }
 }
 
-//todo Pass background colour in as name has a noticeable buble around the icon \/\/
+//todo Pass background colour in as name has a noticeable bubble around the icon \/\/
 class EditBorderButton extends StatelessWidget {
   final double? width;
   final double? height;

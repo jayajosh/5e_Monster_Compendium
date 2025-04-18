@@ -177,20 +177,6 @@ advance(context,_page,_textFieldController,overwrite) async {
       arguments: routename);
 }
 
-overwriteRoute(routename) async {
-  DatabaseReference dbRef = FirebaseDatabase.instance.reference().child(
-      "Routes").child("${getUid()}-${routename}");
-
-  await dbRef.set({
-    "routename": routename,
-    "uid": getUid(),
-    "username": getUsername().toString(),
-    "rating": 0,
-    "nrating": 0,
-    "city": "Get users city",
-  });
-  await dbRef.child("route").set([]);
-}
 */
 resetPassword(context){ //todo fix dialog
   TextEditingController _textFieldController = TextEditingController();
@@ -199,7 +185,7 @@ resetPassword(context){ //todo fix dialog
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
-      bool isValid = false;
+      bool isValid = false; //todo validate passwords
 
       if (Platform.isAndroid) {
         return AlertDialog(

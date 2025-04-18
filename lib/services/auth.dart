@@ -53,7 +53,7 @@ void login(context, String email, String password) async{
   if (password.length <= 5) {snackMessage(context,'Password too short.');}
   else {
     try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword( //todo check this
           email: email,
           password: password
       );

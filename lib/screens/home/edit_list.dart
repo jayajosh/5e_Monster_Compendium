@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../../components/item_views.dart';
@@ -139,9 +138,6 @@ class _EditList extends State<EditList> {
   @override
   Widget build(BuildContext context) { //todo refactor to match monster search
     createQuery();
-    Size size = MediaQuery
-        .of(context)
-        .size;
 
     _controller.addListener(() {
       setState(() {

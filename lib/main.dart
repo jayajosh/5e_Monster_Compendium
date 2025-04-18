@@ -66,7 +66,7 @@ class _Main extends State<Main> with WidgetsBindingObserver{
               /*handleStartUpLogic(context);*/
               //handleLinks();
               if (snapshot.hasError) {
-                print ('An error has occured ${snapshot.error.toString()}'); //todo logcat it
+                print ('An error has occurred ${snapshot.error.toString()}'); //todo logcat it
                 return Text('Something went wrong!');
               } else if (snapshot.hasData) {
                 return Splash();
