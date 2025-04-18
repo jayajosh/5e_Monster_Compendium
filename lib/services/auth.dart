@@ -121,7 +121,9 @@ userSetup (uid,username){
   return {
     "Username": username,
     "PhotoUrl": null,
-    "SavedMonsters": [""]
+    "Bio": null,
+    "SavedMonsters": [],
+    "LikedMonsters": [],
   };
 }
 
