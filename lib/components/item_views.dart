@@ -16,7 +16,7 @@ Widget MonsterSetupBasic(double cr, String name, GestureTapCallback onTap, Widge
   );
 }
 
-Widget MonsterSetupBookmarks(double cr, String name, GestureTapCallback onTap, Widget? trailing, BuildContext context) {
+Widget MonsterSetupBookmarks(double cr, String name, GestureTapCallback onTap, Widget? trailing, BuildContext context) { //todo just use setupBasic instead?
   String crText;
   cr==0 ? crText = "0" : cr>=1 ? crText = cr.truncate().toString() : crText = "1/"+(1/cr).truncate().toString();
 

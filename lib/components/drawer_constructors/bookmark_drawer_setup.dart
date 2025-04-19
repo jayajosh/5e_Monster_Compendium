@@ -47,47 +47,63 @@ class _BookmarkDrawerSetupState extends State<BookmarkDrawerSetup> {
     );
   }
 
-  Query<MonsterStore> getBookmarks(bookmarks) {
-    if (bookmarks != null) {
-      var monsterQuery = MonsterRef.collection('Monsters').where(FieldPath.documentId, whereIn: bookmarks).withConverter(
-          fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
+  Query<MonsterStore>? getBookmarks(List bookmarks) {
+    if (bookmarks.isNotEmpty) {
+      var monsterQuery = MonsterRef.collection('Monsters').where(
+          FieldPath.documentId, whereIn: bookmarks).withConverter(
+          fromFirestore: (snapshot, _) =>
+              MonsterStore.fromMap(snapshot.data()!),
           toFirestore: (MonsterStore, _) => MonsterStore.toMap());
       return monsterQuery;
     }
-    var monsterQuery = MonsterRef.collection('Monsters').where(FieldPath.documentId, whereIn: bookmarks).withConverter(
-        fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
-        toFirestore: (MonsterStore, _) => MonsterStore.toMap());
-    return monsterQuery;
+    return null;
   }
+
+  getBody() {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (userProvider.user?.saved_monsters != null) {
+      var query = getBookmarks(userProvider.user!.saved_monsters);
+      if (query != null) {
+        return Expanded(
+          child: FirestoreListView<MonsterStore>(
+            query: query,
+            pageSize: 20,
+            emptyBuilder: (context) => const Text('No data'),
+            errorBuilder: (context, error, stackTrace) =>
+                Text(error.toString()),
+            loadingBuilder: (context) => const CircularProgressIndicator(),
+            itemBuilder: (context, doc) {
+              final monster = doc.data();
+              return Column(
+                children: [
+                  MonsterSetupBookmarks(
+                      monster.cr!.toDouble(), monster.name!, () {
+                    openBookmark(doc.id);
+                  }, Icon(Icons.navigate_next), context),
+                  Divider(thickness: 0.4),
+                ],
+              );
+            },
+          ),
+        );
+      }
+    }
+    return Expanded(child: Center(child: Text('No bookmarks found!')));
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    return Drawer(
+        child: SafeArea(
+            child: Column(
+              children: [Text('Bookmarked Monsters',style: TextStyle(fontWeight: FontWeight.w800,fontSize: 16),),
+                Divider(),
+                getBody()
+              ],
 
-    if (userProvider.user?.saved_monsters != null) {
-      return Drawer(
-          child: SafeArea(
-            child: FirestoreListView<MonsterStore>(
-              query: getBookmarks(userProvider.user?.saved_monsters),
-              pageSize: 20,
-              emptyBuilder: (context) => const Text('No data'),
-              errorBuilder: (context, error, stackTrace) =>
-                  Text(error.toString()),
-              loadingBuilder: (context) => const CircularProgressIndicator(),
-              itemBuilder: (context, doc) {
-                final monster = doc.data();
-                return MonsterSetupBookmarks(monster.cr!.toDouble(),monster.name!,(){openBookmark(doc.id);},Icon(Icons.navigate_next),context);
-              },
-            ),
-          )
-      );
-    }
-    else{
-      return Drawer(
-          child: SafeArea(
-            child: Center(child:Text('No bookmarks found!')), //todo add some hint text on how to save a bookmark
-          )
-      );
-    }
+            )
+        )
+    );
   }
 }

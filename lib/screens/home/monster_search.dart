@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import '../../components/item_views.dart';
 import '../../locator.dart';
 import '../../services/auth.dart';
@@ -9,6 +10,8 @@ import '../../services/active_filters.dart';
 import '../../services/monster_factory.dart';
 //import '../../services/dynamic_link.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
+
+import '../../services/user_provider.dart';
 
 final db = FirebaseFirestore.instance;
 
@@ -30,8 +33,7 @@ class _MonsterSearch extends State<MonsterSearch> {
   var lastItem;*/
 
   String search = "";
-
-  List bookmarked = [];
+  late UserProvider userProvider;
 
   createQuery() {
     Query<MonsterStore> monsterQuery = MonsterRef.withConverter(
@@ -64,11 +66,11 @@ class _MonsterSearch extends State<MonsterSearch> {
   popUpBuilder(doc){
     return PopupMenuButton(
       icon: Icon(Icons.more_vert),
-      itemBuilder: (context) {return popUpItems();},
+      itemBuilder: (context) {return popUpItems(doc.id);},
       onSelected: (value) {
         if(value == "copy"){/*copy()*/}
-        else if (value == "save"){/*save("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
-        else if (value == "unsave"){/*unsave("${routes[index]["uid"]}-${routes[index]["routename"]}");*/}
+        else if (value == "save"){save(doc.id);}
+        else if (value == "unsave"){unsave(doc.id);}
         else if (value == "qr"){/*qr("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
         else if (value == "share"){/*share("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
         else {view(doc.id);}
@@ -76,7 +78,7 @@ class _MonsterSearch extends State<MonsterSearch> {
     );
   }
 
-  popUpItems() {
+  popUpItems(monsterId) {
     return [
       PopupMenuItem(value: "copy",
           child: Row(children: [
@@ -84,7 +86,7 @@ class _MonsterSearch extends State<MonsterSearch> {
                 child: Icon(Icons.copy)),
             Text("Copy to Homebrewery")
           ])),
-      bookmarkCheck(uid),
+      bookmarkCheck(monsterId),
       PopupMenuItem(value: "qr",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
@@ -102,8 +104,8 @@ class _MonsterSearch extends State<MonsterSearch> {
     ];
   }
 
-  PopupMenuItem bookmarkCheck(uid) {
-    if (bookmarked.contains(uid)) {
+  PopupMenuItem bookmarkCheck(monsterId) {
+    if (userProvider.user!.saved_monsters.contains(monsterId)) { //todo null check userProvider.user
       return PopupMenuItem(value: "unsave",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
@@ -148,21 +150,16 @@ class _MonsterSearch extends State<MonsterSearch> {
 
 
   /// TODO BOOKMARKS \/\/
-/*  save(uid){
-    bookmarked.add(uid);
-    Monsterdb.child("Users").child("${getUid()}").child("SavedRoutes").set(bookmarked);
+  save(monsterId){
+    userProvider.user?.saved_monsters.add(monsterId);
+    db.collection("Users").doc("${getUid()}").update({'saved_monsters':FieldValue.arrayUnion([monsterId])});
   }
 
-  unsave(uid){
-    bookmarked.remove(uid);
-    FirebaseDatabase.instance.reference().child("Users").child("${getUid()}").child("SavedRoutes").set(bookmarked);
+  unsave(monsterId){
+    userProvider.user?.saved_monsters.remove(monsterId);
+    db.collection("Users").doc("${getUid()}").update({'saved_monsters':FieldValue.arrayRemove([monsterId])});
   }
 
-  setBookmarked()async{  await  FirebaseDatabase.instance.reference().child("Users").child("${getUid()}").child("SavedRoutes").once().then((snapshot) {
-    bookmarked = List.from(snapshot.value);
-  });
-  }
-*/
 /*  void loadmore(){
     setState(() {
       loadedIndex+=20;
@@ -193,6 +190,7 @@ class _MonsterSearch extends State<MonsterSearch> {
   @override
   void initState() {
     super.initState();
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     //_scrollController.addListener(_onScroll);
     //setBookmarked();
   }
