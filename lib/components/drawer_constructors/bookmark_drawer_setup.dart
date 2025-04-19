@@ -7,6 +7,7 @@ import '../../services/monster_factory.dart';
 import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 
 import '../../services/user_provider.dart';
+import '../item_views.dart';
 
 
 class BookmarkDrawerSetup extends StatefulWidget {
@@ -17,6 +18,15 @@ class BookmarkDrawerSetup extends StatefulWidget {
 class _BookmarkDrawerSetupState extends State<BookmarkDrawerSetup> {
 
   final MonsterRef = FirebaseFirestore.instance;
+
+  openBookmark(uid) async {
+    if (!context.mounted) return; // Ensures context is valid
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushNamed(
+          context, '/Home/MonsterView',
+          arguments: [uid]);
+    });
+  }
 
   Widget HeaderSetup() {
     return SizedBox();
@@ -66,7 +76,7 @@ class _BookmarkDrawerSetupState extends State<BookmarkDrawerSetup> {
               loadingBuilder: (context) => const CircularProgressIndicator(),
               itemBuilder: (context, doc) {
                 final monster = doc.data();
-                return Text('${monster.cr!.toDouble()},${monster.name!}');
+                return MonsterSetupBookmarks(monster.cr!.toDouble(),monster.name!,(){openBookmark(doc.id);},Icon(Icons.navigate_next),context);
               },
             ),
           )
