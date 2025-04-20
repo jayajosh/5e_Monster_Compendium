@@ -239,7 +239,7 @@ class MonsterStore {
   upload(context,monsterMap) async {
     final db = FirebaseFirestore.instance;
     String id = db.collection('Monsters').doc().id;
-    image_url = await storeChild(id,image,context); //todo decide whether to wait or not
+    if(image != null){image_url = await storeChild(id,image,context);} //todo decide whether to wait or not
     db.collection('Monsters').doc(id).set(monsterMap)
         .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Error writing document: $e"),
@@ -261,7 +261,7 @@ class MonsterStore {
 
   update(context,Map monsterMap, id) async {
     final db = FirebaseFirestore.instance;
-    image_url = await storeChild(id,image,context); //todo decide whether to wait or not
+    if(image != null){image_url = await storeChild(id,image,context);}//todo decide whether to wait or not
     monsterMap.remove(created_at);
     monsterMap.remove(creator_id);
     var uploadMonsterMap = monsterMap.cast<Object,Object>();
