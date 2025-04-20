@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../../components/item_views.dart';
@@ -29,7 +30,7 @@ class _EditList extends State<EditList> {
   List bookmarked = [];
 
   createQuery() {
-    var monsterQuery = MonsterRef.limit(20).where('creator_id', isEqualTo: 'ifzGB7g8xNavV7LWrXhHWbE0Gyg2'/*FirebaseAuth.instance.currentUser?.uid.toString()*/).get();
+    var monsterQuery = MonsterRef.limit(20).where('creator_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid.toString()).get();
     return monsterQuery;
   }
 
