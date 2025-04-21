@@ -165,3 +165,20 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     );
   }
 }
+
+Widget shimmerBorder() {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(8,8,0,8),
+    child: Container(
+      padding: EdgeInsets.all(16),
+      foregroundDecoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/frame_border_dark.png'),
+          fit: BoxFit.fill,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(color: Colors.black,),
+    ),
+  );
+}

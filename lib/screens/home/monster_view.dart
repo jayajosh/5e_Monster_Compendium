@@ -349,7 +349,7 @@ Widget loading(context){
                 children: [
                   Expanded(
                     child: ShimmerLoading(
-                      child: PhotoBorder(url: null),
+                      child: shimmerBorder(),
                       ),
                     ),
                   Expanded(

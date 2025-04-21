@@ -2,6 +2,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/themes.dart';
+import 'loading_shimmer.dart';
 
 class PhotoBorder extends StatelessWidget {//todo resize images to save ram (flutter inspector to see this)
   final String? url;
@@ -12,11 +13,21 @@ class PhotoBorder extends StatelessWidget {//todo resize images to save ram (flu
         future: getImage(url),
         builder: (context,snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            //todo swap to shimmer
-            return const CircularProgressIndicator();
+            return Shimmer(
+                child: ShimmerLoading(
+                  child: shimmerBorder(),
+                )
+            );
           } else if (snapshot.hasError) {
             print('Error loading image: ${snapshot.error}'); //todo log it
-            return const Text('Error loading image'); //todo swap to error image or placeholder
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(Icons.error),
+                const Text('Error loading image'),
+              ],
+            ); //todo swap to error image or placeholder
           } else {
             return Consumer<ThemeNotifier>(
               builder: (context, theme, _) {
