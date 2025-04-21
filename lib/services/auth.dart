@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:monster_compendium/components/platform_dialog.dart';
+import 'package:monster_compendium/services/user_factory.dart';
 //import 'package:monster_compendium/services/picture_storage.dart';
 import 'package:monster_compendium/services/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,7 @@ void registration(context, String username, String email, String password) async
           password: password
       );
       await _auth.currentUser!.updateProfile(displayName: username);
-      await setUser();
+      await setUser(context);
       userCredential = await _auth.signInWithEmailAndPassword(
           email: email,
           password: password
@@ -128,7 +129,12 @@ userSetup (uid,username){
   };
 }
 
-setUser() async {await storageRef.collection("Users").doc(_auth.currentUser?.uid).set(userSetup(_auth.currentUser?.uid,_auth.currentUser?.displayName));}
+setUser(context) async {
+  UserStore user = UserStore();
+  user.username = _auth.currentUser?.displayName;
+  //await storageRef.collection("Users").doc(_auth.currentUser?.uid).set(userSetup(_auth.currentUser?.uid,_auth.currentUser?.displayName));
+  await user.create(context);
+}
 
 resetPass(email){
   _auth.sendPasswordResetEmail(email: email);

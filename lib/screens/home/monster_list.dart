@@ -108,7 +108,7 @@ class _MonsterList extends State<MonsterList> {
   }
 
   PopupMenuItem bookmarkCheck(monsterId) {
-    if (userProvider.user!.saved_monsters.contains(monsterId)) { //todo null check userProvider.user
+    if (userProvider.user!.saved_monsters!.contains(monsterId)) { //todo null check userProvider.user
       return PopupMenuItem(value: "unsave",
           child: Row(children: [
             Padding(padding: const EdgeInsets.only(right: 10.0),
@@ -154,12 +154,12 @@ class _MonsterList extends State<MonsterList> {
 
   /// TODO BOOKMARKS \/\/
   save(monsterId){
-    userProvider.user?.saved_monsters.add(monsterId);
+    userProvider.user?.saved_monsters!.add(monsterId);
     db.collection("Users").doc("${getUid()}").update({'saved_monsters':FieldValue.arrayUnion([monsterId])});
   }
 
   unsave(monsterId){
-    userProvider.user?.saved_monsters.remove(monsterId);
+    userProvider.user?.saved_monsters!.remove(monsterId);
     db.collection("Users").doc("${getUid()}").update({'saved_monsters':FieldValue.arrayRemove([monsterId])});
   }
 

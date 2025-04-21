@@ -8,8 +8,9 @@ class UserStore {
   String? username;
   String? bio;
   String? image_url;
-  List<String> saved_monsters = [];
-  List<String> liked_monsters = [];
+  List<String>? saved_monsters = [];
+  List<String>? liked_monsters = [];
+  List<String>? created_monsters = [];
 
 
 
@@ -17,8 +18,9 @@ class UserStore {
     this.username,
     this.bio,
     this.image_url,
-    required this.saved_monsters,
-    required this.liked_monsters,
+    this.saved_monsters,
+    this.liked_monsters,
+    this.created_monsters,
 
   });
 
@@ -29,6 +31,7 @@ class UserStore {
       image_url: map['image_url'],
       saved_monsters: (map['saved_monsters'] as List<dynamic>).cast<String>().toList(),
       liked_monsters: (map['liked_monsters'] as List<dynamic>).cast<String>().toList(),
+      created_monsters: (map['created_monsters'] as List<dynamic>).cast<String>().toList(),
     );
   }
 
@@ -38,15 +41,18 @@ class UserStore {
       'username': username,
       'bio': bio,
       'image_url': image_url,
-      'saved_monsters': saved_monsters,
-      'liked_monsters': liked_monsters,
+      'saved_monsters': saved_monsters ?? [],
+      'liked_monsters': liked_monsters ?? [],
+      'created_monsters': created_monsters ?? [],
     };
   }
 
-  create(context,userMap) async {
+  create(context) async {
+    print('Creating');
+    Map<String,dynamic> userMap = toMap();
     final db = FirebaseFirestore.instance;
     //image_url = await storeChild(uid,image,context); //todo decide whether to wait or not
-    db.collection('Monsters').doc(uid).set(userMap)
+    db.collection('Users').doc(uid).set(userMap)
         .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Error writing document: $e"),
       duration: const Duration(seconds: 5),
@@ -54,11 +60,12 @@ class UserStore {
 
   }
 
-  update(context,Map monsterMap) async {
+  update(context) async {
+    Map userMap = toMap();
     final db = FirebaseFirestore.instance;
     //image_url = await storeChild(uid,image,context); //todo decide whether to wait or not
-    var uploadMonsterMap = monsterMap.cast<Object,Object>();
-    db.collection('Users').doc(uid).update(uploadMonsterMap)
+    var uploadUserMap = userMap.cast<Object,Object>();
+    db.collection('Users').doc(uid).update(uploadUserMap)
         .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Error writing document: $e"),
       duration: const Duration(seconds: 5),
@@ -76,7 +83,7 @@ class UserStore {
       }
       }
       if(missing == '') {
-        update(context, userMap);
+        update(context);
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

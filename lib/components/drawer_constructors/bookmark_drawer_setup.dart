@@ -62,7 +62,7 @@ class _BookmarkDrawerSetupState extends State<BookmarkDrawerSetup> {
   getBody() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     if (userProvider.user?.saved_monsters != null) {
-      var query = getBookmarks(userProvider.user!.saved_monsters);
+      var query = getBookmarks(userProvider.user!.saved_monsters!);
       if (query != null) {
         return Expanded(
           child: FirestoreListView<MonsterStore>(

@@ -332,10 +332,17 @@ Widget getMonsterSection(int index, data) {
   } else if (index == 1) {
     return checkIfSectionEmpty(actions(data));
   } else {
-    if(data['monster_description'] == ''){return noData;}
-    else{return Align(alignment: Alignment.topLeft, child: Text(data['monster_description']));}
+    DateTime date = data['created_at'].toDate();
+    return Column(
+      children: [
+        Align(alignment: Alignment.topLeft, child: Text(data['monster_description'])), //todo null check it and add no data message
+        Divider(),
+        Align(alignment: Alignment.topCenter, child: Text('Created By: ${data['creator_id']}')),
+        Align(alignment: Alignment.topCenter, child: Text('Created On: ${date.day} ${month[date.month]} ${date.year}')),
+      ],
+    );}
   }
-}
+
 
 
 Widget loading(context){
@@ -425,3 +432,18 @@ editButton(statblock,mid,context){
       ),);
   }
 }
+
+Map month = {
+  1:'Jan',
+  2:'Feb',
+  3:'Mar',
+  4:'Apr',
+  5:'May',
+  6:'June',
+  7:'July',
+  8:'August',
+  9:'September',
+  10:'October',
+  11:'November',
+  12:'December',
+};
