@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:monster_compendium/screens/home/monster_search.dart';
+import 'package:monster_compendium/screens/home/monster_list.dart';
 import 'package:monster_compendium/screens/home/edit_list.dart';
 import '../components/avatar.dart';
 import '../components/drawer_constructors/bookmark_drawer_setup.dart';
@@ -16,13 +16,13 @@ class Home extends StatefulWidget {
 
 class _Home extends State<Home>{
   late List<Widget> _page = [
-    MonsterSearch(key: monsterSearchKey),
+    MonsterList(key: monsterListKey),
     EditList(),
     Center(),
     Center(child: Text('Coming Soon')),
     Center(child: StatblockGenerator()),
   ];
-  GlobalKey<State<MonsterSearch>> monsterSearchKey = new GlobalKey<State<MonsterSearch>>();
+  GlobalKey<State<MonsterList>> monsterListKey = new GlobalKey<State<MonsterList>>();
 
 
   int currentIndex = 0;
@@ -45,7 +45,7 @@ class _Home extends State<Home>{
           IconButton(icon: Icon(Icons.search), onPressed: () {  },), //todo disable on other pages
           IconButton(icon: Icon(Icons.filter_alt), onPressed: ()  async {
             await filterList(context);
-            monsterSearchKey.currentState?.setState(() {}); //todo check this is good practise, updates page when filters list closes
+            monsterListKey.currentState?.setState(() {}); //todo check this is good practise, updates page when filters list closes
             },), //todo disable on other pages + fill/unfill for filters (maybe 'custom' widget)
           Padding(
             padding: const EdgeInsets.only(right: 10.0),

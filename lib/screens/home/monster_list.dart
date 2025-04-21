@@ -17,15 +17,15 @@ final db = FirebaseFirestore.instance;
 
 final MonsterRef = db.collection('Monsters');
 
-class MonsterSearch extends StatefulWidget {
-  const MonsterSearch({Key? key}) : super(key: key);
+class MonsterList extends StatefulWidget {
+  const MonsterList({Key? key}) : super(key: key);
 
   @override
-  _MonsterSearch createState() => _MonsterSearch();
+  _MonsterList createState() => _MonsterList();
 
 }
 
-class _MonsterSearch extends State<MonsterSearch> {
+class _MonsterList extends State<MonsterList> {
   TextEditingController _controller = new TextEditingController(text: "");
   /*ScrollController _scrollController = new ScrollController();
   List<QueryDocumentSnapshot> _monsterList = [];
@@ -41,9 +41,12 @@ class _MonsterSearch extends State<MonsterSearch> {
         toFirestore: (MonsterStore, _) => MonsterStore.toMap()
     );
     locator<ActiveFilters>().getOn() ?
-    monsterQuery = MonsterRef//.startAfterDocument(_monsterList.last)
+    monsterQuery = MonsterRef //todo get from list?
         .where('cr', isGreaterThanOrEqualTo: locator<ActiveFilters>().crmin)
         .where('cr', isLessThanOrEqualTo: locator<ActiveFilters>().crmax)
+        .where('size', isEqualTo: locator<ActiveFilters>().size)
+        .where('type', isEqualTo: locator<ActiveFilters>().type)
+        .where('alignment', isEqualTo: locator<ActiveFilters>().alignment)  // todo split into 2 categories?
         .withConverter(
         fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
         toFirestore: (MonsterStore, _) => MonsterStore.toMap()

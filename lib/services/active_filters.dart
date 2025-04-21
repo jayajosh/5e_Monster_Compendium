@@ -6,9 +6,9 @@ class ActiveFilters with ChangeNotifier{
   double? crmin;
   double? crmax;
   String? size;
-  String? habitat;
+  String? type;
+  String? alignment;
 
-  getFilters() async {}
   bool getOn(){return on;}
   updateFilters(){notifyListeners();}
 }
