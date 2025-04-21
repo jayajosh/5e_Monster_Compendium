@@ -85,11 +85,7 @@ class _EditMonster extends State<EditMonster> {
                         Expanded(
                           child: InkWell(
                             onTap: () async {monsterStorage.image = await pickImage(context);},
-                            child: photoBorder(const Image(
-                              image: NetworkImage( //todo add more accurate local placeholder and upload image icon
-                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                            ),
-                            ),
+                            child: PhotoBorder(url: monsterStorage.image_url),
                           ),
                         ),
                         Expanded(
@@ -366,10 +362,7 @@ Widget loading(context){
                 children: [
                   Expanded(
                     child: ShimmerLoading(
-                      child: photoBorder( const Image(
-                        image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'), //todo placeholder image and photoborder needs constraints
-                      ),
-                      ),
+                      child: PhotoBorder(url: null),
                     ),
                   ),
                   Expanded(

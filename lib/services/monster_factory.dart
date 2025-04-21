@@ -195,7 +195,7 @@ class MonsterStore {
       legendary_actions: _toListOfMaps(map['legendary_actions']),//todo fix descriptions & check not a dupe of actions
       monster_description: _toString(map['monster_description']),
       image_url: map['image_url'] ?? null,
-      creator_id: map['creator_id'] ?? '',
+      creator_id: map['creator_id'] ?? FirebaseAuth.instance.currentUser?.uid,
       createdAt: map['created_at'] is String
           ? DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now()
           : (map['created_at'] as Timestamp?)?.toDate() ??

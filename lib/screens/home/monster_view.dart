@@ -68,11 +68,7 @@ class _MonsterView extends State<MonsterView> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: photoBorder(const Image(
-                              image: NetworkImage(
-                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                            ),
-                            ),
+                            child: PhotoBorder(url: statblock.get('image_url')),
                           ),
                           Expanded(
                             child: Container(
@@ -353,12 +349,9 @@ Widget loading(context){
                 children: [
                   Expanded(
                     child: ShimmerLoading(
-                      child: photoBorder( const Image(
-                        image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'), //todo placeholder image and photoborder needs constraints
-                      ),
+                      child: PhotoBorder(url: null),
                       ),
                     ),
-                  ),
                   Expanded(
                     child: ShimmerLoading(
                       child: Container(
