@@ -264,7 +264,7 @@ class MonsterStore {
     if(image != null){image_url = await storeChild(id,image,context);}//todo decide whether to wait or not
     monsterMap.remove(created_at);
     monsterMap.remove(creator_id);
-    var uploadMonsterMap = monsterMap.cast<Object,Object>();
+    var uploadMonsterMap = monsterMap.cast<Object,Object?>();
     db.collection('Monsters').doc(id).update(uploadMonsterMap)
         .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Error writing document: $e"),

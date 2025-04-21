@@ -68,7 +68,7 @@ class _MonsterView extends State<MonsterView> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: PhotoBorder(url: statblock.get('image_url')),
+                            child: Container(height: 200, child: PhotoBorder(url: statblock.get('image_url'))),
                           ),
                           Expanded(
                             child: Container(
