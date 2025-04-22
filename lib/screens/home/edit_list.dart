@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import '../../components/item_views.dart';
+import '../../services/monster_factory.dart';
 //import 'package:share/share.dart';
 //import '../../services/dynamic_link.dart';
 
@@ -137,7 +139,8 @@ class _EditList extends State<EditList> {
   }
 
   @override
-  Widget build(BuildContext context) { //todo refactor to match monster search
+  Widget build(BuildContext context) {
+    //todo refactor to match monster search
     createQuery();
 
     _controller.addListener(() {
@@ -146,49 +149,19 @@ class _EditList extends State<EditList> {
       });
     });
 
-    return FutureBuilder<QuerySnapshot>(
-        future: createQuery(),
-        builder: (BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-                child: Text("Something went wrong")); //todo Use theme colour
-          }
-
-/*          if (snapshot.hasData && !snapshot.data!.exists) {
-            return Center(child: Text("No monster data exists"));
-          }*/
-
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-                resizeToAvoidBottomInset: false,
-                /*TextField(
-                        controller: _controller, decoration: InputDecoration(
-                          hintText: "Search",
-                          hintStyle: TextStyle(color: Theme
-                              .of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.color),
-                          suffixIcon: clearIcon(_controller, context)),
-                      ),*/
-                body: ListView.builder(
-                    itemCount: snapshot.data?.size,
-                    itemBuilder: (BuildContext context, int index) {
-                      return MonsterSetupBasic(snapshot.data?.docs[index].get('cr').toDouble(),snapshot.data?.docs[index].get('name'),(){view(snapshot.data?.docs[index].id);},popUpBuilder(snapshot.data?.docs[index]),context);
-                    }
-                ));
-          }
-          else {
-            return Center(child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                Text("\n\nLoading",style: TextStyle(color: Theme.of(context).colorScheme.onSurface),),
-              ],
-            ));
-          } //todo use theme colour
-        });
+    return FirestoreListView<MonsterStore>(
+        query: createQuery(),
+        pageSize: 20,
+        emptyBuilder: (context) => Center(child: const Text('No data')),
+        errorBuilder: (context, error, stackTrace) =>
+            Center(child: Text(error.toString())),
+        loadingBuilder: (context) => const CircularProgressIndicator(),
+        itemBuilder: (context, doc) {
+          final monster = doc.data();
+          return MonsterSetupBasic(monster.cr!.toDouble(), monster.name!, () {
+            view(doc.id);
+          }, popUpBuilder(doc), context);
+        }
+    );
   }
-
 }
