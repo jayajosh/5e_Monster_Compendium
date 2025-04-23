@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:monster_compendium/components/homebrewery_converter.dart';
 import 'package:provider/provider.dart';
 import '../../components/item_views.dart';
 import '../../locator.dart';
@@ -71,7 +72,7 @@ class _MonsterList extends State<MonsterList> {
       icon: Icon(Icons.more_vert),
       itemBuilder: (context) {return popUpItems(doc.id);},
       onSelected: (value) {
-        if(value == "copy"){/*copy()*/}
+        if(value == "copy"){homebrewery(doc.data());}
         else if (value == "save"){save(doc.id);}
         else if (value == "unsave"){unsave(doc.id);}
         else if (value == "qr"){/*qr("${routes[index]["uid"]}","${routes[index]["routename"]}");*/}
