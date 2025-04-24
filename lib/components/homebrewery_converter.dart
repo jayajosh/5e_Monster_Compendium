@@ -78,6 +78,14 @@ block += abilities_decoder(raw_statblock['actions'])
 
 print (block) */
 
+abilities_decoder(sbk){
+  String ability_block = '';
+  for (var item in sbk){
+    ability_block += '***' + item['name'] + '.*** ' + item['desc'] + '\n';
+  }
+  return ability_block;
+}
+
 homebrewery(MonsterStore monster) {
   String block = '''
   ## ${monster.name}
@@ -86,6 +94,7 @@ homebrewery(MonsterStore monster) {
   **Armor Class** :: ${monster.ac['value']} (${monster.ac['type']})
   **Hit Points** :: ${monster.hit_points}(${monster.hit_dice} todo Convert this to roll)
   **Speed** :: ''';
+  block+= abilities_decoder(monster.special_abilities);
 
   print(block);
 }
