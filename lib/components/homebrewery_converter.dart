@@ -78,9 +78,27 @@ block += abilities_decoder(raw_statblock['actions'])
 
 print (block) */
 
-abilities_decoder(sbk){
+speedDecoder(monster){
+  String block = '';
+  var index = monster.speed.length;
+  for (var item in monster.speed.keys) {
+    index -= 1;
+    if (index == monster.speed.length - 1) {
+      block += '${monster.speed[item]}, ';
+    }
+    else if (index !=0) {
+      block += '${item} ${monster.speed[item]}, ';
+    }
+    else{
+    block += '$item ${monster.speed[item]}';
+        }
+    }
+  return block;
+}
+
+abilitiesDecoder(monsterAbilities){
   String ability_block = '';
-  for (var item in sbk){
+  for (var item in monsterAbilities){
     ability_block += '***' + item['name'] + '.*** ' + item['desc'] + '\n';
   }
   return ability_block;
@@ -94,7 +112,9 @@ homebrewery(MonsterStore monster) {
   **Armor Class** :: ${monster.ac['value']} (${monster.ac['type']})
   **Hit Points** :: ${monster.hit_points}(${monster.hit_dice} todo Convert this to roll)
   **Speed** :: ''';
-  block+= abilities_decoder(monster.special_abilities);
+  block+= speedDecoder(monster);
+  block+='\n';
+  block+= abilitiesDecoder(monster.special_abilities);
 
   print(block);
 }
