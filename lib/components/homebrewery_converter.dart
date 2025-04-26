@@ -78,7 +78,7 @@ block += abilities_decoder(raw_statblock['actions'])
 
 print (block) */
 
-speedDecoder(monster){
+speedDecoder(monster){ //todo refactor so only walk gets text skipped
   String block = '';
   var index = monster.speed.length;
   for (var item in monster.speed.keys) {
@@ -104,8 +104,16 @@ abilitiesDecoder(monsterAbilities){
   return ability_block;
 }
 
+statDecoder(value){
+  String modifier;
+  value <= 10 ? modifier = ((value-10)/2).truncate().toString():modifier = '+'+((value-10)/2).truncate().toString();
+  return '$value ($modifier)';
+}
+
 homebrewery(MonsterStore monster) {
+  final mas = monster.ability_scores;
   String block = '''
+  {{monster,frame
   ## ${monster.name}
   *${monster.size} ${monster.type}, ${monster.alignment}*
   ___
@@ -113,7 +121,13 @@ homebrewery(MonsterStore monster) {
   **Hit Points** :: ${monster.hit_points}(${monster.hit_dice} todo Convert this to roll)
   **Speed** :: ''';
   block+= speedDecoder(monster);
-  block+='\n';
+  block += '''\n
+  ___
+  |  STR  |  DEX  |  CON  |  INT  |  WIS  |  CHA  |
+  |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
+  |${statDecoder(mas['strength'])}|${statDecoder(mas['dexterity'])}|${statDecoder(mas['constitution'])}|${statDecoder(mas['intelligence'])}|${statDecoder(mas['wisdom'])}|${statDecoder(mas['charisma'])}|
+  ___
+  ''';
   block+= abilitiesDecoder(monster.special_abilities);
 
   print(block);
