@@ -50,7 +50,7 @@ ___
 |{stat('strength')}|{stat('dexterity')}|{stat('constitution')}|{stat('intelligence')}|{stat('wisdom')}|{stat('charisma')}|
 ___
 """
-
+todo /\/\ done
 #block += extra_stats('proficiencies')
 
 block += extra_stats('damage_vulnerabilities')
@@ -99,7 +99,7 @@ speedDecoder(monster){ //todo refactor so only walk gets text skipped
 abilitiesDecoder(monsterAbilities){
   String ability_block = '';
   for (var item in monsterAbilities){
-    ability_block += '***' + item['name'] + '.*** ' + item['desc'] + '\n';
+    ability_block += '***${item['name']}*** ${item['desc']}\n  ';
   }
   return ability_block;
 }
@@ -110,10 +110,18 @@ statDecoder(value){
   return '$value ($modifier)';
 }
 
+extraStatsText(extraStat) { //todo fix python uploaded to flutter
+  String extra_block = '';
+  for (var item in extraStat){
+    extra_block += '$item, '; //todo check not last
+  }
+  return extra_block;
+}
+
 homebrewery(MonsterStore monster) {
   final mas = monster.ability_scores;
   String block = '''
-  {{monster,frame
+{{monster,frame
   ## ${monster.name}
   *${monster.size} ${monster.type}, ${monster.alignment}*
   ___
@@ -128,6 +136,15 @@ homebrewery(MonsterStore monster) {
   |${statDecoder(mas['strength'])}|${statDecoder(mas['dexterity'])}|${statDecoder(mas['constitution'])}|${statDecoder(mas['intelligence'])}|${statDecoder(mas['wisdom'])}|${statDecoder(mas['charisma'])}|
   ___
   ''';
+
+  block += 'Condition Immunities: ${extraStatsText(monster.condition_immunities)} \n  ';
+
+  block += 'Damage Vulnerabilities: ${extraStatsText(monster.damage_vulnerabilities)} \n  ';
+
+  block += 'Damage Resistances: ${extraStatsText(monster.damage_resistances)} \n  ';
+
+  block += 'Damage Immunities: ${extraStatsText(monster.damage_immunities)} \n  ';
+
   block+= abilitiesDecoder(monster.special_abilities);
 
   print(block);
