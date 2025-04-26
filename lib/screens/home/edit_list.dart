@@ -32,7 +32,10 @@ class _EditList extends State<EditList> {
   List bookmarked = [];
 
   createQuery() {
-    var monsterQuery = MonsterRef.limit(20).where('creator_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid.toString()).get();
+    Query<MonsterStore> monsterQuery = MonsterRef.where('creator_id', isEqualTo: FirebaseAuth.instance.currentUser?.uid.toString())
+        .withConverter(
+        fromFirestore: (snapshot, _) => MonsterStore.fromMap(snapshot.data()!),
+    toFirestore: (MonsterStore, _) => MonsterStore.toMap());
     return monsterQuery;
   }
 
@@ -154,7 +157,7 @@ class _EditList extends State<EditList> {
         pageSize: 20,
         emptyBuilder: (context) => Center(child: const Text('No data')),
         errorBuilder: (context, error, stackTrace) =>
-            Center(child: Text(error.toString())),
+            Center(child: Text(error.toString())), //todo convert to error message component widget
         loadingBuilder: (context) => const CircularProgressIndicator(),
         itemBuilder: (context, doc) {
           final monster = doc.data();
