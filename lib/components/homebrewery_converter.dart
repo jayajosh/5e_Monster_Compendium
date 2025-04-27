@@ -110,6 +110,14 @@ statDecoder(value){
   return '$value ($modifier)';
 }
 
+extraStatsNumber(Map extraStat) { //todo fix python uploaded to flutter
+  String extra_block = '';
+  for (var item in extraStat.keys){
+    extra_block += '${extraStat.keys.first} ${extraStat[item]},\n'; //todo check not last
+  }
+  return extra_block;
+}
+
 extraStatsText(extraStat) { //todo fix python uploaded to flutter
   String extra_block = '';
   for (var item in extraStat){
@@ -136,6 +144,8 @@ homebrewery(MonsterStore monster) {
   |${statDecoder(mas['strength'])}|${statDecoder(mas['dexterity'])}|${statDecoder(mas['constitution'])}|${statDecoder(mas['intelligence'])}|${statDecoder(mas['wisdom'])}|${statDecoder(mas['charisma'])}|
   ___
   ''';
+
+    block += 'Saving Throws: ${extraStatsNumber(monster.saving_throws)} \n  ';
 
   block += 'Condition Immunities: ${extraStatsText(monster.condition_immunities)} \n  ';
 
