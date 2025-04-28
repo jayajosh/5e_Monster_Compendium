@@ -74,7 +74,8 @@ class MonsterStore {
     this.image_url,
     this.creator_id = '',
     DateTime? createdAt,
-  })  : ac = ac ?? {'type': null, 'value': null},
+  })
+      : ac = ac ?? {'type': null, 'value': null},
         speed = speed ?? {},
         ability_scores = ability_scores ?? {
           'strength': null,
@@ -87,7 +88,8 @@ class MonsterStore {
         saving_throws = saving_throws ?? {},
         skills = skills ?? {},
         condition_immunities =
-            condition_immunities ?? [], // Initialize in initializer list
+            condition_immunities ?? [],
+  // Initialize in initializer list
         damage_resistances = damage_resistances ?? [],
         damage_immunities = damage_immunities ?? [],
         damage_vulnerabilities = damage_vulnerabilities ?? [],
@@ -177,7 +179,8 @@ class MonsterStore {
       type: _toString(map['type']),
       alignment: _toString(map['alignment']),
       cr: _toDouble(map['cr']),
-      ac: map['ac'] is Map ? Map<String, dynamic>.from(map['ac']) : null, //keep original structure
+      ac: map['ac'] is Map ? Map<String, dynamic>.from(map['ac']) : null,
+      //keep original structure
       hit_points: _toDouble(map['hit_points']),
       hit_dice: _toString(map['hit_dice']),
       speed: _toStringMap(map['speed']),
@@ -191,8 +194,10 @@ class MonsterStore {
       senses: _toStringMap(map['senses']),
       languages: _toStringList(map['languages']),
       special_abilities: _toListOfMaps(map['special_abilities']),
-      actions: _toListOfMaps(map['actions']), //todo fix descriptions
-      legendary_actions: _toListOfMaps(map['legendary_actions']),//todo fix descriptions & check not a dupe of actions
+      actions: _toListOfMaps(map['actions']),
+      //todo fix descriptions
+      legendary_actions: _toListOfMaps(map['legendary_actions']),
+      //todo fix descriptions & check not a dupe of actions
       monster_description: _toString(map['monster_description']),
       image_url: map['image_url'] ?? null,
       creator_id: map['creator_id'] ?? FirebaseAuth.instance.currentUser?.uid,
@@ -211,8 +216,8 @@ class MonsterStore {
       'type': type,
       'alignment': alignment,
       'cr': cr,
-      'xp': cr!=null ? calcXP(cr): null,
-      'proficiency_bonus': cr!=null ? proficiencyBonus(this.cr!): null,
+      'xp': cr != null ? calcXP(cr) : null,
+      'proficiency_bonus': cr != null ? proficiencyBonus(this.cr!) : null,
       'ac': ac,
       'hit_points': hit_points,
       'hit_dice': hit_dice,
@@ -236,21 +241,28 @@ class MonsterStore {
     };
   }
 
-  upload(context,monsterMap) async {
+  upload(context, monsterMap) async {
     final db = FirebaseFirestore.instance;
-    String id = db.collection('Monsters').doc().id;
-    if(image != null){image_url = await storeChild(id,image,context);} //todo decide whether to wait or not
+    String id = db
+        .collection('Monsters')
+        .doc()
+        .id;
+    if (image != null) {
+      image_url = await storeChild(id, image, context);
+    } //todo decide whether to wait or not
     db.collection('Monsters').doc(id).set(monsterMap)
-        .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Error writing document: $e"),
-      duration: const Duration(seconds: 5),
-    )));
-
+        .onError((e, _) =>
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error writing document: $e"),
+          duration: const Duration(seconds: 5),
+        )));
   }
 
-  static Future<bool> doesDocumentExist(String collectionPath, String documentId) async {
+  static Future<bool> doesDocumentExist(String collectionPath,
+      String documentId) async {
     try {
-      DocumentReference docRef = FirebaseFirestore.instance.collection(collectionPath).doc(documentId);
+      DocumentReference docRef = FirebaseFirestore.instance.collection(
+          collectionPath).doc(documentId);
       DocumentSnapshot docSnapshot = await docRef.get();
       return docSnapshot.exists;
     } catch (e) {
@@ -259,90 +271,105 @@ class MonsterStore {
     }
   }
 
-  update(context,Map monsterMap, id) async {
+  update(context, Map monsterMap, id) async {
     final db = FirebaseFirestore.instance;
-    if(image != null){image_url = await storeChild(id,image,context);}//todo decide whether to wait or not
+    if (image != null) {
+      image_url = await storeChild(id, image, context);
+    } //todo decide whether to wait or not
     monsterMap.remove(created_at);
     monsterMap.remove(creator_id);
-    var uploadMonsterMap = monsterMap.cast<Object,Object?>();
+    var uploadMonsterMap = monsterMap.cast<Object, Object?>();
     db.collection('Monsters').doc(id).update(uploadMonsterMap)
-        .onError((e, _) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Error writing document: $e"),
-      duration: const Duration(seconds: 5),
-    )));
-
+        .onError((e, _) =>
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Error writing document: $e"),
+          duration: const Duration(seconds: 5),
+        )));
   }
 
-    int proficiencyBonus(double cr) {
-      if (cr == 0) return 2;
-      return ((cr - 1) / 4).floor() + 2;
-    }
+  int proficiencyBonus(double cr) {
+    if (cr == 0) return 2;
+    return ((cr - 1) / 4).floor() + 2;
+  }
 
-    validate(context,bool newMonster, id){
-      Map monsterMap = toMap();
-      final validation = ['name','size','type','alignment','ac','hit_points','cr'];
-      String missing = '';
-      for (var field in validation) {
-        if(field == 'ac' && monsterMap['ac']['value'] == null){
-          missing += '$field, ';
-        }
-        if(monsterMap[field] == null){
-          missing += '$field, ';
+  validate(context, bool newMonster, id) {
+    Map monsterMap = toMap();
+    final validation = [
+      'name',
+      'size',
+      'type',
+      'alignment',
+      'ac',
+      'hit_points',
+      'cr'
+    ];
+    String missing = '';
+    for (var field in validation) {
+      if (field == 'ac' && monsterMap['ac']['value'] == null) {
+        missing += '$field, ';
       }
+      if (monsterMap[field] == null) {
+        missing += '$field, ';
       }
-      //Map<String,dynamic> scores = monsterMap['ability_scores'];
-      for(var stat in monsterMap['ability_scores'].keys)
-      {
-        if(monsterMap['ability_scores'][stat] == null){missing += '${stat.substring(0,3)}, ';}
-      }
-      if(missing == '') {
-        if (newMonster == false) {
-          update(context, monsterMap, id);
-        }
-        else {upload(context, monsterMap);}
-      }
-      else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Missing fields: ${missing.substring(0,missing.length-2)}")));}
     }
-}
+    //Map<String,dynamic> scores = monsterMap['ability_scores'];
+    for (var stat in monsterMap['ability_scores'].keys) {
+      if (monsterMap['ability_scores'][stat] == null) {
+        missing += '${stat.substring(0, 3)}, ';
+      }
+    }
+    if (missing == '') {
+      if (newMonster == false) {
+        update(context, monsterMap, id);
+      }
+      else {
+        upload(context, monsterMap);
+      }
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Missing fields: ${missing.substring(0, missing.length - 2)}")));
+    }
+  }
 
-calcXP(cr){
-   final Map<double, int> crToXp = {
-    0: 10,
-    0.125: 25,
-    0.25: 50,
-    0.5: 100,
-    1: 200,
-    2: 450,
-    3: 700,
-    4: 1100,
-    5: 1800,
-    6: 2300,
-    7: 2900,
-    8: 3900,
-    9: 5000,
-    10: 5900,
-    11: 7200,
-    12: 8400,
-    13: 10000,
-    14: 11500,
-    15: 13000,
-    16: 15000,
-    17: 18000,
-    18: 20000,
-    19: 22000,
-    20: 25000,
-    21: 33000,
-    22: 41000,
-    23: 50000,
-    24: 62000,
-    25: 75000,
-    26: 90000,
-    27: 105000,
-    28: 120000,
-    29: 135000,
-    30: 155000,
-  };
-   return crToXp[cr];
+  calcXP(cr) {
+    final Map<double, int> crToXp = {
+      0: 10,
+      0.125: 25,
+      0.25: 50,
+      0.5: 100,
+      1: 200,
+      2: 450,
+      3: 700,
+      4: 1100,
+      5: 1800,
+      6: 2300,
+      7: 2900,
+      8: 3900,
+      9: 5000,
+      10: 5900,
+      11: 7200,
+      12: 8400,
+      13: 10000,
+      14: 11500,
+      15: 13000,
+      16: 15000,
+      17: 18000,
+      18: 20000,
+      19: 22000,
+      20: 25000,
+      21: 33000,
+      22: 41000,
+      23: 50000,
+      24: 62000,
+      25: 75000,
+      26: 90000,
+      27: 105000,
+      28: 120000,
+      29: 135000,
+      30: 155000,
+    };
+    return crToXp[cr];
+  }
 }

@@ -145,7 +145,7 @@ homebrewery(MonsterStore monster) {
   ___
   ''';
 
-    block += 'Saving Throws: ${extraStatsNumber(monster.saving_throws)} \n  ';
+  block += 'Saving Throws: ${extraStatsNumber(monster.saving_throws)} \n  ';
 
   block += 'Condition Immunities: ${extraStatsText(monster.condition_immunities)} \n  ';
 
@@ -154,6 +154,11 @@ homebrewery(MonsterStore monster) {
   block += 'Damage Resistances: ${extraStatsText(monster.damage_resistances)} \n  ';
 
   block += 'Damage Immunities: ${extraStatsText(monster.damage_immunities)} \n  ';
+
+  block += '''
+**Challenge** :: ${monster.cr} (${monster.calcXP(monster.cr)} XP) {{bonus **Proficiency Bonus** +3}}
+  ___
+  ''';
 
   block+= abilitiesDecoder(monster.special_abilities);
 

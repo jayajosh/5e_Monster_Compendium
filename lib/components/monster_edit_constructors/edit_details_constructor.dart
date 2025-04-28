@@ -751,7 +751,7 @@ class AddDetails {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AddDetailsNumberRow(field: 'saving_throws', monsterStore: monster, key: savingKey),
+          AddDetailsNumberRow(field: 'saving_throws', monsterStore: monster, key: savingKey),
         Divider(thickness: 0.25,),
         AddDetailsNumberRow(field: 'skills', monsterStore: monster, key: skillsKey),
         Divider(thickness: 0.25,),
