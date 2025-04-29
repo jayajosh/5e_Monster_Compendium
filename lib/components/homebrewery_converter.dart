@@ -160,6 +160,8 @@ homebrewery(MonsterStore monster) {
   ___
   ''';
 
+  block+= abilitiesDecoder(monster.actions);
+
   block+= abilitiesDecoder(monster.special_abilities);
 
   print(block);
